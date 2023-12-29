@@ -14,24 +14,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { createDoctor } from "@/lib/actions";
-
-const specialities = [
-  "GENERAL",
-  "CARDIOLOGY",
-  "ORTHOPEDICS",
-  "NEUROLOGY",
-  "ONCOLOGY",
-];
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Patient } from "@prisma/client";
+import { updatePatient } from "@/lib/actions";
 
 const formSchema = z.object({
   name: z
@@ -41,9 +34,6 @@ const formSchema = z.object({
     .min(1, {
       message: "Name must be at least 1 characters.",
     }),
-  speciality: z.string({
-    required_error: "Speciality is required.",
-  }),
   phone: z
     .string({
       required_error: "Phone number is required.",
@@ -65,17 +55,21 @@ const formSchema = z.object({
     .email({
       message: "Invalid email address.",
     }),
+  dateOfBirth: z.date({
+    required_error: "Date of birth is required.",
+  }),
 });
 
-export function CreateDoctorForm() {
+export function EditPatientForm({ patient }: { patient: Patient }) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      phone: "",
-      address: "",
-      email: "",
+      name: patient.name ? patient.name : "",
+      phone: patient.phone ? patient.phone : "",
+      address: patient.address ? patient.address : "",
+      email: patient.email ? patient.email : "",
+      dateOfBirth: patient.birthday ? new Date(patient.birthday) : new Date(),
     },
   });
 
@@ -84,12 +78,13 @@ export function CreateDoctorForm() {
     // ✅ This will be type-safe and validated.
     console.log(values);
 
-    await createDoctor(values);
+    await updatePatient(patient.id, values);
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Name */}
         <FormField
           control={form.control}
           name="name"
@@ -106,6 +101,8 @@ export function CreateDoctorForm() {
             </FormItem>
           )}
         />
+
+        {/* Phone */}
         <FormField
           control={form.control}
           name="phone"
@@ -122,6 +119,8 @@ export function CreateDoctorForm() {
             </FormItem>
           )}
         />
+
+        {/* Email */}
         <FormField
           control={form.control}
           name="email"
@@ -138,6 +137,8 @@ export function CreateDoctorForm() {
             </FormItem>
           )}
         />
+
+        {/* Address */}
         <FormField
           control={form.control}
           name="address"
@@ -147,37 +148,53 @@ export function CreateDoctorForm() {
               <FormControl>
                 <Input placeholder="Modern Academy, Lucknow...." {...field} />
               </FormControl>
-              <FormDescription>
-                This is the address of your clinic
-              </FormDescription>
+              <FormDescription>This is your primary address</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Date of Birth*/}
         <FormField
           control={form.control}
-          name="speciality"
+          name="dateOfBirth"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Speciality</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a speciality" {...field} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Specialities</SelectLabel>
-                    {specialities.map((speciality) => (
-                      <SelectItem key={speciality} value={speciality}>
-                        {speciality}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FormDescription>This is your specialization</FormDescription>
+            <FormItem className="flex flex-col">
+              <FormLabel>Date of Birth</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] pl-3 text-left font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormDescription>
+                Your date of birth is used to calculate your age.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

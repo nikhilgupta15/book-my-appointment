@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { getDoctors } from "@/lib/data";
 import Link from "next/link";
+import { DeleteDoctor, UpdateDoctor } from "./buttons";
 
 export async function DoctorTable() {
   const doctors = await getDoctors();
@@ -25,6 +26,7 @@ export async function DoctorTable() {
           <TableHead>Phone</TableHead>
           <TableHead>Address</TableHead>
           <TableHead>Appointments</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -43,6 +45,12 @@ export async function DoctorTable() {
               >
                 Appointments
               </Link>
+            </TableCell>
+            <TableCell>
+              <div className="flex justify-start gap-2">
+                <UpdateDoctor id={doctor.id} />
+                <DeleteDoctor id={doctor.id} />
+              </div>
             </TableCell>
           </TableRow>
         ))}

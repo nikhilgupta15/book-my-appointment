@@ -11,6 +11,7 @@ import {
 import { getPatients } from "@/lib/data";
 import { format } from "date-fns";
 import Link from "next/link";
+import { DeletePatient, UpdatePatient } from "./buttons";
 
 export async function PatientTable() {
   const patients = await getPatients();
@@ -26,6 +27,7 @@ export async function PatientTable() {
           <TableHead>Address</TableHead>
           <TableHead>Date Of Birth</TableHead>
           <TableHead>Appointments</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -46,6 +48,12 @@ export async function PatientTable() {
               >
                 Appointments
               </Link>
+            </TableCell>
+            <TableCell>
+              <div className="flex justify-start gap-2">
+                <UpdatePatient id={patient.id} />
+                <DeletePatient id={patient.id} />
+              </div>
             </TableCell>
           </TableRow>
         ))}

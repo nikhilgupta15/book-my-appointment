@@ -23,7 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createDoctor } from "@/lib/actions";
+import { updateDoctor } from "@/lib/actions";
+import { Doctor } from "@prisma/client";
 
 const specialities = [
   "GENERAL",
@@ -67,15 +68,16 @@ const formSchema = z.object({
     }),
 });
 
-export function CreateDoctorForm() {
+export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      phone: "",
-      address: "",
-      email: "",
+      name: doctor.name ? doctor.name : "",
+      phone: doctor.phone ? doctor.phone : "",
+      address: doctor.address ? doctor.address : "",
+      email: doctor.email ? doctor.email : "",
+      speciality: doctor.speciality ? doctor.speciality : "",
     },
   });
 
@@ -84,7 +86,7 @@ export function CreateDoctorForm() {
     // ✅ This will be type-safe and validated.
     console.log(values);
 
-    await createDoctor(values);
+    await updateDoctor(doctor.id, values);
   }
 
   return (

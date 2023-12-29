@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { getAppointments } from "@/lib/data";
 import { format } from "date-fns";
+import { DeleteAppointment, UpdateAppointment } from "./buttons";
 
 export async function AppointmentTable() {
   const appointments = await getAppointments();
@@ -23,6 +24,7 @@ export async function AppointmentTable() {
           <TableHead>Patient Name</TableHead>
           <TableHead>Doctor Name</TableHead>
           <TableHead>Date and Time</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -33,6 +35,12 @@ export async function AppointmentTable() {
             <TableCell>{appointment.doctorName}</TableCell>
             <TableCell>
               {format(new Date(appointment.date), "dd/MM/yyyy HH:mm")}
+            </TableCell>
+            <TableCell>
+              <div className="flex justify-start gap-2">
+                <UpdateAppointment id={appointment.id} />
+                <DeleteAppointment id={appointment.id} />
+              </div>
             </TableCell>
           </TableRow>
         ))}
