@@ -190,3 +190,51 @@ export async function updateAppointment(id: string, data: AppointmentFormType) {
   revalidatePath("/dashboard/appointments");
   redirect("/dashboard/appointments");
 }
+
+export async function deleteDoctor(id: string) {
+  try {
+    const doctor = await prisma.doctor.delete({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    return {
+      message: "Database Error: Failed to Delete Doctor.",
+    };
+  }
+  revalidatePath("/dashboard/doctors");
+}
+
+export async function deletePatient(id: string) {
+  try {
+    const patient = await prisma.patient.delete({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    return {
+      message: "Database Error: Failed to Delete Patient.",
+    };
+  }
+  revalidatePath("/dashboard/patients");
+}
+
+export async function deleteAppointment(id: string) {
+  try {
+    const appointment = await prisma.appointment.delete({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    return {
+      message: "Database Error: Failed to Delete Appointment.",
+    };
+  }
+  revalidatePath("/dashboard/appointments");
+}

@@ -1,3 +1,4 @@
+import { deleteAppointment } from "@/lib/actions";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -26,7 +27,7 @@ export function UpdateAppointment({ id }: { id: string }) {
 
 export function DeleteAppointment({ id }: { id: string }) {
   return (
-    <form>
+    <form action={deleteAppointment.bind(null, id)}>
       <button className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-5" />
