@@ -23,142 +23,133 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { createPatient } from "@/lib/actions";
+import { Doctor, Patient } from "@prisma/client";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { createAppointment } from "@/lib/actions";
 
 const formSchema = z.object({
-  name: z
-    .string({
-      required_error: "Name is required.",
-    })
-    .min(1, {
-      message: "Name must be at least 1 characters.",
-    }),
-  phone: z
-    .string({
-      required_error: "Phone number is required.",
-    })
-    .length(10, {
-      message: "Phone number must be 10 digits.",
-    }),
-  address: z
-    .string({
-      required_error: "Address is required.",
-    })
-    .min(1, {
-      message: "Address must be at least 1 characters.",
-    }),
-  email: z
-    .string({
-      required_error: "Email is required.",
-    })
-    .email({
-      message: "Invalid email address.",
-    }),
-  dateOfBirth: z.date({
-    required_error: "Date of birth is required.",
+  patientId: z.string({
+    required_error: "Patient Name is required",
+  }),
+  doctorId: z.string({
+    required_error: "Doctor Name is required",
+  }),
+  appointmentDate: z.date({
+    required_error: "Appointment Date is required",
   }),
 });
 
-export function CreatePatientForm() {
+export function CreateAppointmentForm({
+  patients,
+  doctors,
+}: {
+  patients: Patient[];
+  doctors: Doctor[];
+}) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      phone: "",
-      address: "",
-      email: "",
-    },
+    defaultValues: {},
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
 
-    await createPatient(values);
+    const patientName = patients.find(
+      (patient) => patient.id === values.patientId
+    )?.name;
+    const doctorName = doctors.find(
+      (doctor) => doctor.id === values.doctorId
+    )?.name;
+
+    const appointmentData = {
+      ...values,
+      patientName: patientName ? patientName : "",
+      doctorName: doctorName ? doctorName : "",
+    };
+
+    console.log(appointmentData);
+
+    await createAppointment(appointmentData);
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* Name */}
+        {/* Patient */}
         <FormField
           control={form.control}
-          name="name"
+          name="patientId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="John Doe" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormLabel>Choose Patient</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a patient" {...field} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Select a patient</SelectLabel>
+                    {patients.map((patient) => (
+                      <SelectItem key={patient.id} value={patient.id}>
+                        {patient.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Phone */}
+        {/* Doctor */}
         <FormField
           control={form.control}
-          name="phone"
+          name="doctorId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <Input placeholder="XXXXXXXXXX" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your primary contact number.
-              </FormDescription>
+              <FormLabel>Choose Doctor</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a doctor" {...field} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Select a doctor</SelectLabel>
+                    {doctors.map((doctor) => (
+                      <SelectItem key={doctor.id} value={doctor.id}>
+                        {doctor.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Email */}
+        {/* Appointment Date*/}
         <FormField
           control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="john.doe@example.com" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your primary email address.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Address */}
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input placeholder="Modern Academy, Lucknow...." {...field} />
-              </FormControl>
-              <FormDescription>This is your primary address</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Date of Birth*/}
-        <FormField
-          control={form.control}
-          name="dateOfBirth"
+          name="appointmentDate"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date of Birth</FormLabel>
+              <FormLabel>Appointment Date</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -190,9 +181,6 @@ export function CreatePatientForm() {
                   />
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

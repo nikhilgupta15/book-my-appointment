@@ -26,10 +26,10 @@ export type Doctor = {
 
 export type Appointment = {
   id: number;
-  patient: Patient;
   patientId: number;
-  doctor: Doctor;
+  patientName: string;
   doctorId: number;
+  doctorName: string;
   date: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -41,4 +41,20 @@ export type CreateDoctorFormType = {
   phone: string;
   address: string;
   email: string;
+};
+
+export type CreatePatientFormType = {
+  name: string;
+  phone: string;
+  address: string;
+  email: string;
+  dateOfBirth: Date;
+};
+
+export type AppointmentFormType = {
+  patientId: string;
+  doctorId: string;
+  doctorName: string;
+  patientName: string;
+  appointmentDate: Date;
 };

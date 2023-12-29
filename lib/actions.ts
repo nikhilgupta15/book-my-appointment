@@ -1,7 +1,11 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { CreateDoctorFormType } from "./definitions";
+import {
+  AppointmentFormType,
+  CreateDoctorFormType,
+  CreatePatientFormType,
+} from "./definitions";
 import { PrismaClient, Speciality } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -47,4 +51,47 @@ export async function createDoctor(data: CreateDoctorFormType) {
 
   revalidatePath("/dashboard/doctors");
   redirect("/dashboard/doctors");
+}
+
+export async function createPatient(data: CreatePatientFormType) {
+  try {
+    const patient = await prisma.patient.create({
+      data: {
+        name: data.name,
+        phone: data.phone,
+        address: data.address,
+        email: data.email,
+        birthday: data.dateOfBirth,
+      },
+    });
+  } catch (error) {
+    return {
+      message: "Database Error: Failed to Create Patient.",
+    };
+  }
+
+  revalidatePath("/dashboard/patients");
+  redirect("/dashboard/patients");
+}
+
+export async function createAppointment(data: AppointmentFormType) {
+  try {
+    const appointment = await prisma.appointment.create({
+      data: {
+        patientId: data.patientId,
+        doctorId: data.doctorId,
+        date: data.appointmentDate,
+        doctorName: data.doctorName,
+        patientName: data.patientName,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    return {
+      message: "Database Error: Failed to Create Appointment.",
+    };
+  }
+
+  revalidatePath("/dashboard/appointments");
+  redirect("/dashboard/appointments");
 }

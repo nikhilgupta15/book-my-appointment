@@ -2,7 +2,8 @@
 import {
   UserGroupIcon,
   HomeIcon,
-  DocumentDuplicateIcon,
+  ScissorsIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
@@ -15,7 +16,17 @@ const links = [
   {
     name: "Doctors",
     href: "/dashboard/doctors",
-    icon: DocumentDuplicateIcon,
+    icon: ScissorsIcon,
+  },
+  {
+    name: "Patients",
+    href: "/dashboard/patients",
+    icon: UserGroupIcon,
+  },
+  {
+    name: "Appointments",
+    href: "/dashboard/appointments",
+    icon: ClipboardDocumentListIcon,
   },
 ];
 

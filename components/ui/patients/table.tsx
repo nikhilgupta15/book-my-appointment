@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getPatients } from "@/lib/data";
+import { format } from "date-fns";
 import Link from "next/link";
 
 export async function PatientTable() {
@@ -35,7 +36,7 @@ export async function PatientTable() {
             <TableCell>{patient.phone}</TableCell>
             <TableCell>{patient.address}</TableCell>
             <TableCell>
-              {/* {format(new Date(doctor.dateOfBirth), "dd/MM/yyyy")} */}
+              {format(new Date(patient.birthday), "dd/MM/yyyy")}
             </TableCell>
             <TableCell>
               <Link
