@@ -6,7 +6,7 @@ import {
   CreateDoctorFormType,
   CreatePatientFormType,
 } from "./definitions";
-import { PrismaClient, Speciality } from "@prisma/client";
+import { PrismaClient, Speciality, Status } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -83,6 +83,8 @@ export async function createAppointment(data: AppointmentFormType) {
         date: data.appointmentDate,
         doctorName: data.doctorName,
         patientName: data.patientName,
+        description: data.description,
+        status: Status.SCHEDULED,
       },
     });
   } catch (error) {
@@ -178,6 +180,8 @@ export async function updateAppointment(id: string, data: AppointmentFormType) {
         date: data.appointmentDate,
         doctorName: data.doctorName,
         patientName: data.patientName,
+        description: data.description,
+        status: Status.SCHEDULED,
       },
     });
   } catch (error) {
@@ -237,4 +241,24 @@ export async function deleteAppointment(id: string) {
     };
   }
   revalidatePath("/dashboard/appointments");
+}
+
+export async function updateAppointmentStatus(id: string, status: Status) {
+  try {
+    const appointment = await prisma.appointment.update({
+      where: {
+        id: id,
+      },
+      data: {
+        status: status,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    return {
+      message: "Database Error: Failed to Update Appointment Status.",
+    };
+  }
+  revalidatePath("/dashboard/appointments");
+  redirect("/dashboard/appointments");
 }

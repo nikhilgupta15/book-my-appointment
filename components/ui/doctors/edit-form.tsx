@@ -25,14 +25,7 @@ import {
 } from "@/components/ui/select";
 import { updateDoctor } from "@/lib/actions";
 import { Doctor } from "@prisma/client";
-
-const specialities = [
-  "GENERAL",
-  "CARDIOLOGY",
-  "ORTHOPEDICS",
-  "NEUROLOGY",
-  "ONCOLOGY",
-];
+import { specialities } from "@/lib/constants";
 
 const formSchema = z.object({
   name: z

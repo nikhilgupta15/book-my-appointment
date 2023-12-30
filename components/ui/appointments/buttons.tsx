@@ -1,6 +1,9 @@
-import { deleteAppointment } from "@/lib/actions";
+import { deleteAppointment, updateAppointmentStatus } from "@/lib/actions";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { Button } from "../button";
+import { Check, Ban } from "lucide-react";
+import { Status } from "@prisma/client";
 
 export function CreateAppointment() {
   return (
@@ -33,5 +36,29 @@ export function DeleteAppointment({ id }: { id: string }) {
         <TrashIcon className="w-5" />
       </button>
     </form>
+  );
+}
+
+export function MarkAsCompleteAppointment({ id }: { id: string }) {
+  return (
+    <Button
+      type="button"
+      className="bg-green-500 hover:bg-green-600"
+      onClick={() => updateAppointmentStatus(id, Status.COMPLETED)}
+    >
+      <Check className="mr-2 h-4 w-4" /> Mark as Complete
+    </Button>
+  );
+}
+
+export function CancelAppointment({ id }: { id: string }) {
+  return (
+    <Button
+      type="button"
+      className="bg-red-500 hover:bg-red-600"
+      onClick={() => updateAppointmentStatus(id, Status.CANCELLED)}
+    >
+      <Ban className="mr-2 h-4 w-4" /> Cancel
+    </Button>
   );
 }

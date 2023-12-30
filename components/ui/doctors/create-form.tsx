@@ -24,14 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createDoctor } from "@/lib/actions";
-
-const specialities = [
-  "GENERAL",
-  "CARDIOLOGY",
-  "ORTHOPEDICS",
-  "NEUROLOGY",
-  "ONCOLOGY",
-];
+import { specialities } from "@/lib/constants";
 
 const formSchema = z.object({
   name: z

@@ -57,4 +57,5 @@ export type AppointmentFormType = {
   doctorName: string;
   patientName: string;
   appointmentDate: Date;
+  description: string;
 };

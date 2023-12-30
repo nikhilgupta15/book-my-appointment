@@ -22,7 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn, convertTimeSlotHoursTo24HourFormat } from "@/lib/utils";
 import { Doctor, Patient } from "@prisma/client";
 import {
   Select,
@@ -33,7 +33,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { createAppointment } from "@/lib/actions";
+import { useRef } from "react";
+import { timeSlots } from "@/lib/constants";
 
 const formSchema = z.object({
   patientId: z.string({
@@ -45,6 +48,10 @@ const formSchema = z.object({
   appointmentDate: z.date({
     required_error: "Appointment Date is required",
   }),
+  description: z.string(),
+  timeSlot: z.string({
+    required_error: "Time Slot is required",
+  }),
 });
 
 export function CreateAppointmentForm({
@@ -54,16 +61,14 @@ export function CreateAppointmentForm({
   patients: Patient[];
   doctors: Doctor[];
 }) {
-  // 1. Define your form.
+  const inputDateRef = useRef<HTMLInputElement>(null); // This is a reference to the input element which sets the appointment date.
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-
     const patientName = patients.find(
       (patient) => patient.id === values.patientId
     )?.name;
@@ -71,10 +76,19 @@ export function CreateAppointmentForm({
       (doctor) => doctor.id === values.doctorId
     )?.name;
 
+    const hoursIn24HourFormat = convertTimeSlotHoursTo24HourFormat(
+      values.timeSlot
+    );
+
     const appointmentData = {
       ...values,
       patientName: patientName ? patientName : "",
       doctorName: doctorName ? doctorName : "",
+      appointmentDate: inputDateRef.current
+        ? new Date(
+            `${inputDateRef.current?.value} ${hoursIn24HourFormat}:00:00`
+          )
+        : new Date(),
     };
 
     console.log(appointmentData);
@@ -143,48 +157,78 @@ export function CreateAppointmentForm({
           )}
         />
 
-        {/* Appointment Date*/}
+        {/* Description */}
         <FormField
           control={form.control}
-          name="appointmentDate"
+          name="description"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Appointment Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Tell in brief about your problem"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                You can mention about your symptoms, issues etc which can help
+                the doctor to understand your problem better.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Appointment Date */}
+        <FormField
+          control={form.control}
+          name="appointmentDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Appointment Date</FormLabel>
+              <FormControl>
+                <Input
+                  type="date"
+                  min={new Date().toISOString().split("T")[0]}
+                  defaultValue={field.value.toISOString().split("T")[0]}
+                  ref={inputDateRef}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Time Slot */}
+        <FormField
+          control={form.control}
+          name="timeSlot"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Choose a time slot</FormLabel>
+              <Select onValueChange={field.onChange}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a time slot" {...field} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Select a time slot</SelectLabel>
+                    {timeSlots.map((timeSlot) => (
+                      <SelectItem key={timeSlot} value={timeSlot}>
+                        {timeSlot}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type="submit">Submit</Button>
       </form>
     </Form>
