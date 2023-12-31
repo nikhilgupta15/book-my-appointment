@@ -1,10 +1,12 @@
 import { CreateAppointment } from "@/components/ui/appointments/buttons";
 import { AppointmentTable } from "@/components/ui/appointments/table";
 import { lusitana } from "@/components/ui/common/fonts";
+import Pagination from "@/components/ui/common/pagination";
 import Search from "@/components/ui/common/search";
+import { getAppointmentsTotalPages } from "@/lib/data";
 import React, { Suspense } from "react";
 
-export default function AppointmentsPage({
+export default async function AppointmentsPage({
   searchParams,
 }: {
   searchParams: {
@@ -14,6 +16,8 @@ export default function AppointmentsPage({
 }) {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
+
+  const totalPages = await getAppointmentsTotalPages(query);
 
   return (
     <div className="w-full">
@@ -29,9 +33,9 @@ export default function AppointmentsPage({
           <AppointmentTable query={query} currentPage={currentPage} />
         </Suspense>
       </div>
-      {/* <div className="mt-5 flex w-full justify-center">
+      <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
-      </div> */}
+      </div>
     </div>
   );
 }

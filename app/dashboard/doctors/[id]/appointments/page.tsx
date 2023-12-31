@@ -1,21 +1,39 @@
 import { AppointmentTableForDoctorsAndPatients } from "@/components/ui/common/appointment-table";
 import Breadcrumbs from "@/components/ui/common/breadcrumbs";
+import Pagination from "@/components/ui/common/pagination";
 import Search from "@/components/ui/common/search";
-import { getAppointmentsByDoctorId, getDoctorById } from "@/lib/data";
+import {
+  getAppointmentsByDoctorId,
+  getAppointmentsByDoctorIdTotalPages,
+  getDoctorById,
+} from "@/lib/data";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
 
 export default async function AppointmentsForDoctorPage({
   params: { id },
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: {
+    query?: string;
+    page?: string;
+  };
 }) {
-  const doctorData = getDoctorById(id);
-  const appointmentsData = getAppointmentsByDoctorId(id);
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
 
-  const [doctor, appointments] = await Promise.all([
+  const doctorData = getDoctorById(id);
+  const appointmentsData = getAppointmentsByDoctorId(id, query, currentPage);
+  const appointmentTotalPagesData = getAppointmentsByDoctorIdTotalPages(
+    id,
+    query
+  );
+
+  const [doctor, appointments, totalPages] = await Promise.all([
     doctorData,
     appointmentsData,
+    appointmentTotalPagesData,
   ]);
 
   if (!doctor) {
@@ -49,9 +67,9 @@ export default async function AppointmentsForDoctorPage({
             />
           </Suspense>
         </div>
-        {/* <div className="mt-5 flex w-full justify-center">
-        <Pagination totalPages={totalPages} />
-      </div> */}
+        <div className="mt-5 flex w-full justify-center">
+          <Pagination totalPages={totalPages} />
+        </div>
       </div>
     </main>
   );

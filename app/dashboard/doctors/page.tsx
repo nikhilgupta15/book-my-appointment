@@ -1,10 +1,12 @@
 import { lusitana } from "@/components/ui/common/fonts";
+import Pagination from "@/components/ui/common/pagination";
 import Search from "@/components/ui/common/search";
 import { CreateDoctor } from "@/components/ui/doctors/buttons";
 import { DoctorTable } from "@/components/ui/doctors/table";
+import { getDoctorsTotalPages } from "@/lib/data";
 import React, { Suspense } from "react";
 
-export default function DoctorsPage({
+export default async function DoctorsPage({
   searchParams,
 }: {
   searchParams: {
@@ -14,6 +16,8 @@ export default function DoctorsPage({
 }) {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
+
+  const totalPages = await getDoctorsTotalPages(query);
 
   return (
     <div className="w-full">
@@ -29,9 +33,9 @@ export default function DoctorsPage({
           <DoctorTable query={query} currentPage={currentPage} />
         </Suspense>
       </div>
-      {/* <div className="mt-5 flex w-full justify-center">
+      <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
-      </div> */}
+      </div>
     </div>
   );
 }
