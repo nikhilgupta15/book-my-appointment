@@ -4,7 +4,17 @@ import { CreatePatient } from "@/components/ui/patients/buttons";
 import { PatientTable } from "@/components/ui/patients/table";
 import React, { Suspense } from "react";
 
-export default function PatientsPage() {
+export default function PatientsPage({
+  searchParams,
+}: {
+  searchParams: {
+    query?: string;
+    page?: string;
+  };
+}) {
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
@@ -16,7 +26,7 @@ export default function PatientsPage() {
       </div>
       <div className="mt-8">
         <Suspense fallback={<div>Loading...</div>}>
-          <PatientTable />
+          <PatientTable query={query} currentPage={currentPage} />
         </Suspense>
       </div>
       {/* <div className="mt-5 flex w-full justify-center">

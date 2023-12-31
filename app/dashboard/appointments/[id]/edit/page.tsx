@@ -1,6 +1,8 @@
 import { EditAppointmentForm } from "@/components/ui/appointments/edit-form";
 import Breadcrumbs from "@/components/ui/common/breadcrumbs";
 import { getAppointmentById, getDoctors, getPatients } from "@/lib/data";
+import { Status } from "@prisma/client";
+import { notFound } from "next/navigation";
 
 export default async function AppointmentEditPage({
   params: { id },
@@ -17,8 +19,8 @@ export default async function AppointmentEditPage({
     appointmentData,
   ]);
 
-  if (!appointment) {
-    return;
+  if (!appointment || appointment.status !== Status.SCHEDULED) {
+    notFound();
   }
 
   return (

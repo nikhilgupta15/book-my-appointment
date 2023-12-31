@@ -11,9 +11,16 @@ import {
 import { getDoctors } from "@/lib/data";
 import Link from "next/link";
 import { DeleteDoctor, UpdateDoctor } from "./buttons";
+import { lusitana } from "../common/fonts";
 
-export async function DoctorTable() {
-  const doctors = await getDoctors();
+export async function DoctorTable({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) {
+  const doctors = await getDoctors(query, currentPage);
 
   return (
     <Table>
@@ -30,30 +37,41 @@ export async function DoctorTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {doctors.map((doctor) => (
-          <TableRow key={doctor.id}>
-            <TableCell>{doctor.name}</TableCell>
-            <TableCell>{doctor.speciality}</TableCell>
-            <TableCell>{doctor.email}</TableCell>
-            <TableCell>{doctor.phone}</TableCell>
-            <TableCell>{doctor.address}</TableCell>
-            <TableCell>
-              <Link
-                href={`/dashboard/doctors`}
-                // href={`/dashboard/doctors/${doctor.id}/appointments`}
-                className="text-blue-500 hover:text-blue-700"
-              >
-                Appointments
-              </Link>
-            </TableCell>
-            <TableCell>
-              <div className="flex justify-start gap-2">
-                <UpdateDoctor id={doctor.id} />
-                <DeleteDoctor id={doctor.id} />
+        {doctors.length > 0 &&
+          doctors.map((doctor) => (
+            <TableRow key={doctor.id}>
+              <TableCell>{doctor.name}</TableCell>
+              <TableCell>{doctor.speciality}</TableCell>
+              <TableCell>{doctor.email}</TableCell>
+              <TableCell>{doctor.phone}</TableCell>
+              <TableCell>{doctor.address}</TableCell>
+              <TableCell>
+                <Link
+                  href={`/dashboard/doctors/${doctor.id}/appointments`}
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  Appointments
+                </Link>
+              </TableCell>
+              <TableCell>
+                <div className="flex justify-start gap-2">
+                  <UpdateDoctor id={doctor.id} />
+                  <DeleteDoctor id={doctor.id} />
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        {doctors.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={7}>
+              <div className="flex w-full items-center justify-center">
+                <h1 className={`${lusitana.className} text-xl`}>
+                  No Doctors Found
+                </h1>
               </div>
             </TableCell>
           </TableRow>
-        ))}
+        )}
       </TableBody>
       {/* <TableFooter>
         <TableRow>

@@ -4,7 +4,17 @@ import { CreateDoctor } from "@/components/ui/doctors/buttons";
 import { DoctorTable } from "@/components/ui/doctors/table";
 import React, { Suspense } from "react";
 
-export default function DoctorsPage() {
+export default function DoctorsPage({
+  searchParams,
+}: {
+  searchParams: {
+    query?: string;
+    page?: string;
+  };
+}) {
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
@@ -16,7 +26,7 @@ export default function DoctorsPage() {
       </div>
       <div className="mt-8">
         <Suspense fallback={<div>Loading...</div>}>
-          <DoctorTable />
+          <DoctorTable query={query} currentPage={currentPage} />
         </Suspense>
       </div>
       {/* <div className="mt-5 flex w-full justify-center">

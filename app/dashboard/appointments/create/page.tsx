@@ -3,8 +3,8 @@ import Breadcrumbs from "@/components/ui/common/breadcrumbs";
 import { getDoctors, getPatients } from "@/lib/data";
 
 export default async function AppointmentCreatePage() {
-  const patientData = getPatients();
-  const doctorData = getDoctors();
+  const patientData = getPatients("", 1);
+  const doctorData = getDoctors("", 1);
 
   const [patients, doctors] = await Promise.all([patientData, doctorData]);
 

@@ -191,8 +191,8 @@ export function CreateAppointmentForm({
                 <Input
                   type="date"
                   min={new Date().toISOString().split("T")[0]}
-                  defaultValue={field.value.toISOString().split("T")[0]}
                   ref={inputDateRef}
+                  onChange={(e) => field.onChange(new Date(e.target.value))}
                 />
               </FormControl>
               <FormMessage />

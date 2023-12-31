@@ -13,11 +13,18 @@ import { format } from "date-fns";
 import { DeleteAppointment, UpdateAppointment } from "./buttons";
 import { Badge } from "@/components/ui/badge";
 import { Status } from "@prisma/client";
-import { cva } from "class-variance-authority";
+import { lusitana } from "../common/fonts";
 
-export async function AppointmentTable() {
-  const appointments = await getAppointments();
+export async function AppointmentTable({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) {
+  const appointments = await getAppointments(query, currentPage);
 
+  ``;
   return (
     <Table>
       {/* <TableCaption>A list of doctors</TableCaption> */}
@@ -33,28 +40,42 @@ export async function AppointmentTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {appointments.map((appointment) => (
-          <TableRow key={appointment.id}>
-            <TableCell>{appointment.id}</TableCell>
-            <TableCell>{appointment.patientName}</TableCell>
-            <TableCell>{appointment.doctorName}</TableCell>
-            <TableCell>
-              {format(new Date(appointment.date), "dd/MM/yyyy HH:mm")}
-            </TableCell>
-            <TableCell>{appointment.description}</TableCell>
-            <TableCell>
-              <Badge className={setBadgeColor(appointment.status)}>
-                {appointment.status}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <div className="flex justify-start gap-2">
-                <UpdateAppointment id={appointment.id} />
-                <DeleteAppointment id={appointment.id} />
+        {appointments.length > 0 &&
+          appointments.map((appointment) => (
+            <TableRow key={appointment.id}>
+              <TableCell>{appointment.id}</TableCell>
+              <TableCell>{appointment.patientName}</TableCell>
+              <TableCell>{appointment.doctorName}</TableCell>
+              <TableCell>
+                {format(new Date(appointment.date), "dd/MM/yyyy HH:mm")}
+              </TableCell>
+              <TableCell>{appointment.description}</TableCell>
+              <TableCell>
+                <Badge className={setBadgeColor(appointment.status)}>
+                  {appointment.status}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <div className="flex justify-start gap-2">
+                  {appointment.status === Status.SCHEDULED ? (
+                    <UpdateAppointment id={appointment.id} />
+                  ) : null}
+                  <DeleteAppointment id={appointment.id} />
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        {appointments.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={7}>
+              <div className="flex w-full items-center justify-center">
+                <h1 className={`${lusitana.className} text-xl`}>
+                  No Appointments Found
+                </h1>
               </div>
             </TableCell>
           </TableRow>
-        ))}
+        )}
       </TableBody>
       {/* <TableFooter>
         <TableRow>
