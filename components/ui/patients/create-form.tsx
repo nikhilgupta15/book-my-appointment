@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { createPatient } from "@/lib/actions";
+import { toast } from "../use-toast";
 
 const formSchema = z.object({
   name: z
@@ -76,7 +77,14 @@ export function CreatePatientForm() {
     // ✅ This will be type-safe and validated.
     console.log(values);
 
-    await createPatient(values);
+    const feedback = await createPatient(values);
+
+    if (feedback && feedback.error) {
+      toast({
+        title: feedback.message,
+        variant: "destructive",
+      });
+    }
   }
 
   return (

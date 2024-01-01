@@ -1,6 +1,6 @@
 import { EditAppointmentForm } from "@/components/ui/appointments/edit-form";
 import Breadcrumbs from "@/components/ui/common/breadcrumbs";
-import { getAppointmentById, getDoctors, getPatients } from "@/lib/data";
+import { getAllDoctors, getAllPatients, getAppointmentById } from "@/lib/data";
 import { Status } from "@prisma/client";
 import { notFound } from "next/navigation";
 
@@ -9,8 +9,8 @@ export default async function AppointmentEditPage({
 }: {
   params: { id: string };
 }) {
-  const patientData = getPatients();
-  const doctorData = getDoctors();
+  const patientData = getAllPatients();
+  const doctorData = getAllDoctors();
   const appointmentData = getAppointmentById(id);
 
   const [patients, doctors, appointment] = await Promise.all([

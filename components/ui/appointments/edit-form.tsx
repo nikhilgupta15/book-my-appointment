@@ -34,6 +34,7 @@ import {
   convertTimeSlotHoursTo12HourFormat,
   convertTimeSlotHoursTo24HourFormat,
 } from "@/lib/utils";
+import { toast } from "../use-toast";
 
 const formSchema = z.object({
   patientId: z.string({
@@ -102,7 +103,14 @@ export function EditAppointmentForm({
 
     console.log(appointmentData);
 
-    await updateAppointment(appointment.id, appointmentData);
+    const feedback = await updateAppointment(appointment.id, appointmentData);
+
+    if (feedback && feedback.error) {
+      toast({
+        title: feedback.message,
+        variant: "destructive",
+      });
+    }
   }
 
   return (

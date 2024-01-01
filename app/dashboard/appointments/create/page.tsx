@@ -1,10 +1,10 @@
 import { CreateAppointmentForm } from "@/components/ui/appointments/create-form";
 import Breadcrumbs from "@/components/ui/common/breadcrumbs";
-import { getDoctors, getPatients } from "@/lib/data";
+import { getAllDoctors, getAllPatients } from "@/lib/data";
 
 export default async function AppointmentCreatePage() {
-  const patientData = getPatients("", 1);
-  const doctorData = getDoctors("", 1);
+  const patientData = getAllPatients();
+  const doctorData = getAllDoctors();
 
   const [patients, doctors] = await Promise.all([patientData, doctorData]);
 

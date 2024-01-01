@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { convertTimeSlotHoursTo12HourFormat } from "./utils";
+import { timeSlots } from "./constants";
 
 const prisma = new PrismaClient();
 
@@ -37,8 +39,8 @@ export async function getDoctors(query: string, page: number) {
     });
     return data;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch doctors data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 export async function getPatients(query: string, page: number) {
@@ -76,8 +78,8 @@ export async function getPatients(query: string, page: number) {
     });
     return data;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch patients data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -116,8 +118,8 @@ export async function getAppointments(query: string, page: number) {
     });
     return data;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch appointments data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -130,8 +132,8 @@ export async function getPatientById(id: string) {
     });
     return data;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch patient data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -144,8 +146,8 @@ export async function getDoctorById(id: string) {
     });
     return data;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch doctor data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -158,8 +160,8 @@ export async function getAppointmentById(id: string) {
     });
     return data;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch appointment data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -204,8 +206,8 @@ export async function getAppointmentsByDoctorId(
     });
     return appointment;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch appointment data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -250,8 +252,8 @@ export async function getAppointmentsByPatientId(
     });
     return appointment;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch appointment data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -288,8 +290,8 @@ export async function getPatientsTotalPages(query: string) {
     });
     return Math.ceil(data.length / 6);
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch patients data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -326,8 +328,8 @@ export async function getDoctorsTotalPages(query: string) {
     });
     return Math.ceil(data.length / 6);
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch doctors data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -364,8 +366,8 @@ export async function getAppointmentsTotalPages(query: string) {
     });
     return Math.ceil(data.length / 6);
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch appointments data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -407,8 +409,8 @@ export async function getAppointmentsByDoctorIdTotalPages(
     });
     return Math.ceil(appointment.length / 6);
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch appointment data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }
 
@@ -450,7 +452,61 @@ export async function getAppointmentsByPatientIdTotalPages(
     });
     return Math.ceil(appointment.length / 6);
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch appointment data.");
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
+  }
+}
+
+export async function getAllPatients() {
+  try {
+    const allPatients = await prisma.patient.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
+    return allPatients;
+  } catch (error) {
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
+  }
+}
+
+export async function getAllDoctors() {
+  try {
+    const allDoctors = await prisma.doctor.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
+    return allDoctors;
+  } catch (error) {
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
+  }
+}
+
+export async function getAvailableTimeSlotsByDoctorId(
+  doctorId: string,
+  date: Date
+) {
+  try {
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        doctorId: doctorId,
+        date: date,
+      },
+    });
+
+    const bookedTimeSlots = appointments.map((appointment) => {
+      return convertTimeSlotHoursTo12HourFormat(
+        appointment.date
+          .toLocaleString("en-GB", { timeZone: "IST" })
+          .split(" ")[1]
+      );
+    });
+    return bookedTimeSlots;
+  } catch (error) {
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
   }
 }

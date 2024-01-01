@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "../button";
 import { Check, Ban } from "lucide-react";
 import { Status } from "@prisma/client";
+import { toast } from "../use-toast";
 
 export function CreateAppointment() {
   return (
@@ -44,7 +45,15 @@ export function MarkAsCompleteAppointment({ id }: { id: string }) {
     <Button
       type="button"
       className="bg-green-500 hover:bg-green-600"
-      onClick={() => updateAppointmentStatus(id, Status.COMPLETED)}
+      onClick={async () => {
+        const feedback = await updateAppointmentStatus(id, Status.COMPLETED);
+        if (feedback && feedback.error) {
+          toast({
+            title: feedback.message,
+            variant: "destructive",
+          });
+        }
+      }}
     >
       <Check className="mr-2 h-4 w-4" /> Mark as Complete
     </Button>
@@ -56,7 +65,15 @@ export function CancelAppointment({ id }: { id: string }) {
     <Button
       type="button"
       className="bg-red-500 hover:bg-red-600"
-      onClick={() => updateAppointmentStatus(id, Status.CANCELLED)}
+      onClick={async () => {
+        const feedback = await updateAppointmentStatus(id, Status.CANCELLED);
+        if (feedback && feedback.error) {
+          toast({
+            title: feedback.message,
+            variant: "destructive",
+          });
+        }
+      }}
     >
       <Ban className="mr-2 h-4 w-4" /> Cancel
     </Button>

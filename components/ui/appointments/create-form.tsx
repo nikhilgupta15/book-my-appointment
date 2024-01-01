@@ -37,6 +37,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { createAppointment } from "@/lib/actions";
 import { useRef } from "react";
 import { timeSlots } from "@/lib/constants";
+import { toast } from "../use-toast";
 
 const formSchema = z.object({
   patientId: z.string({
@@ -93,7 +94,14 @@ export function CreateAppointmentForm({
 
     console.log(appointmentData);
 
-    await createAppointment(appointmentData);
+    const feedback = await createAppointment(appointmentData);
+
+    if (feedback && feedback.error) {
+      toast({
+        title: feedback.message,
+        variant: "destructive",
+      });
+    }
   }
 
   return (

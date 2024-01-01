@@ -7,6 +7,8 @@ import {
   CreatePatientFormType,
 } from "./definitions";
 import { PrismaClient, Speciality, Status } from "@prisma/client";
+import { getAvailableTimeSlotsByDoctorId } from "./data";
+import { convertTimeSlotHoursTo12HourFormat } from "./utils";
 
 const prisma = new PrismaClient();
 
@@ -34,7 +36,7 @@ export async function createDoctor(data: CreateDoctorFormType) {
         break;
     }
 
-    const doctor = await prisma.doctor.create({
+    await prisma.doctor.create({
       data: {
         name: data.name,
         speciality: speciality,
@@ -45,7 +47,8 @@ export async function createDoctor(data: CreateDoctorFormType) {
     });
   } catch (error) {
     return {
-      message: "Database Error: Failed to Create Doctor.",
+      error: "true",
+      message: `${error}. Failed to Create Doctor.`,
     };
   }
 
@@ -55,7 +58,7 @@ export async function createDoctor(data: CreateDoctorFormType) {
 
 export async function createPatient(data: CreatePatientFormType) {
   try {
-    const patient = await prisma.patient.create({
+    await prisma.patient.create({
       data: {
         name: data.name,
         phone: data.phone,
@@ -66,7 +69,8 @@ export async function createPatient(data: CreatePatientFormType) {
     });
   } catch (error) {
     return {
-      message: "Database Error: Failed to Create Patient.",
+      error: true,
+      message: `${error}. Failed to Create Patient.`,
     };
   }
 
@@ -76,7 +80,24 @@ export async function createPatient(data: CreatePatientFormType) {
 
 export async function createAppointment(data: AppointmentFormType) {
   try {
-    const appointment = await prisma.appointment.create({
+    const bookedTimeSlots = await getAvailableTimeSlotsByDoctorId(
+      data.doctorId,
+      data.appointmentDate
+    );
+
+    const timeSlotBooked = convertTimeSlotHoursTo12HourFormat(
+      data.appointmentDate
+        .toLocaleString("en-GB", { timeZone: "IST" })
+        .split(" ")[1]
+    );
+
+    if (bookedTimeSlots.findIndex((t) => t === timeSlotBooked) !== -1) {
+      throw new Error(
+        "Time Slot not available. Already booked for another patient"
+      );
+    }
+
+    await prisma.appointment.create({
       data: {
         patientId: data.patientId,
         doctorId: data.doctorId,
@@ -90,7 +111,8 @@ export async function createAppointment(data: AppointmentFormType) {
   } catch (error) {
     console.error("Database Error:", error);
     return {
-      message: "Database Error: Failed to Create Appointment.",
+      error: true,
+      message: `${error}. Failed to Create Appointment.`,
     };
   }
 
@@ -122,7 +144,7 @@ export async function updateDoctor(id: string, data: CreateDoctorFormType) {
         break;
     }
 
-    const doctor = await prisma.doctor.update({
+    await prisma.doctor.update({
       where: {
         id: id,
       },
@@ -136,7 +158,8 @@ export async function updateDoctor(id: string, data: CreateDoctorFormType) {
     });
   } catch (error) {
     return {
-      message: "Database Error: Failed to Create Doctor.",
+      error: true,
+      message: `${error}. Failed to Update Doctor.`,
     };
   }
 
@@ -146,7 +169,7 @@ export async function updateDoctor(id: string, data: CreateDoctorFormType) {
 
 export async function updatePatient(id: string, data: CreatePatientFormType) {
   try {
-    const patient = await prisma.patient.update({
+    await prisma.patient.update({
       where: {
         id: id,
       },
@@ -160,7 +183,8 @@ export async function updatePatient(id: string, data: CreatePatientFormType) {
     });
   } catch (error) {
     return {
-      message: "Database Error: Failed to Create Patient.",
+      error: true,
+      message: `${error}. Failed to Update Patient.`,
     };
   }
 
@@ -170,7 +194,24 @@ export async function updatePatient(id: string, data: CreatePatientFormType) {
 
 export async function updateAppointment(id: string, data: AppointmentFormType) {
   try {
-    const appointment = await prisma.appointment.update({
+    const bookedTimeSlots = await getAvailableTimeSlotsByDoctorId(
+      data.doctorId,
+      data.appointmentDate
+    );
+
+    const timeSlotBooked = convertTimeSlotHoursTo12HourFormat(
+      data.appointmentDate
+        .toLocaleString("en-GB", { timeZone: "IST" })
+        .split(" ")[1]
+    );
+
+    if (bookedTimeSlots.findIndex((t) => t === timeSlotBooked) !== -1) {
+      throw new Error(
+        "Time Slot not available. Already booked for another patient"
+      );
+    }
+
+    await prisma.appointment.update({
       where: {
         id: id,
       },
@@ -187,7 +228,8 @@ export async function updateAppointment(id: string, data: AppointmentFormType) {
   } catch (error) {
     console.error("Database Error:", error);
     return {
-      message: "Database Error: Failed to Create Appointment.",
+      error: true,
+      message: `${error}. Failed to Update Appointment.`,
     };
   }
 
@@ -197,55 +239,61 @@ export async function updateAppointment(id: string, data: AppointmentFormType) {
 
 export async function deleteDoctor(id: string) {
   try {
-    const doctor = await prisma.doctor.delete({
+    await prisma.doctor.delete({
       where: {
         id: id,
       },
     });
   } catch (error) {
     console.error("Database Error:", error);
-    return {
-      message: "Database Error: Failed to Delete Doctor.",
-    };
+    throw new Error(`${error}. Failed to Delete Doctor.`);
+    // return {
+    //   error: true,
+    //   message: "Database Error: Failed to Delete Doctor.",
+    // };
   }
   revalidatePath("/dashboard/doctors");
 }
 
 export async function deletePatient(id: string) {
   try {
-    const patient = await prisma.patient.delete({
+    await prisma.patient.delete({
       where: {
         id: id,
       },
     });
   } catch (error) {
     console.error("Database Error:", error);
-    return {
-      message: "Database Error: Failed to Delete Patient.",
-    };
+    throw new Error(`${error}. Failed to Delete Patient.`);
+    // return {
+    //   error: true,
+    //   message: "Database Error: Failed to Delete Patient.",
+    // };
   }
   revalidatePath("/dashboard/patients");
 }
 
 export async function deleteAppointment(id: string) {
   try {
-    const appointment = await prisma.appointment.delete({
+    await prisma.appointment.delete({
       where: {
         id: id,
       },
     });
   } catch (error) {
     console.error("Database Error:", error);
-    return {
-      message: "Database Error: Failed to Delete Appointment.",
-    };
+    throw new Error(`${error}. Failed to Delete Appointment.`);
+    // return {
+    //   error: true,
+    //   message: "Database Error: Failed to Delete Appointment.",
+    // };
   }
   revalidatePath("/dashboard/appointments");
 }
 
 export async function updateAppointmentStatus(id: string, status: Status) {
   try {
-    const appointment = await prisma.appointment.update({
+    await prisma.appointment.update({
       where: {
         id: id,
       },
@@ -256,7 +304,8 @@ export async function updateAppointmentStatus(id: string, status: Status) {
   } catch (error) {
     console.error("Database Error:", error);
     return {
-      message: "Database Error: Failed to Update Appointment Status.",
+      error: true,
+      message: `${error}. Failed to Update Appointment Status.`,
     };
   }
   revalidatePath("/dashboard/appointments");

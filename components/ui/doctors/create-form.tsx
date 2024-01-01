@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { createDoctor } from "@/lib/actions";
 import { specialities } from "@/lib/constants";
+import { toast } from "../use-toast";
 
 const formSchema = z.object({
   name: z
@@ -77,7 +78,14 @@ export function CreateDoctorForm() {
     // ✅ This will be type-safe and validated.
     console.log(values);
 
-    await createDoctor(values);
+    const feedback = await createDoctor(values);
+
+    if (feedback && feedback.error) {
+      toast({
+        title: feedback.message,
+        variant: "destructive",
+      });
+    }
   }
 
   return (

@@ -22,7 +22,7 @@ export function convertTimeSlotHoursTo24HourFormat(timeSlot: string) {
 }
 
 export function convertTimeSlotHoursTo12HourFormat(timeSlot: string) {
-  console.log(timeSlot);
+  //console.log(timeSlot);
   const hoursIn12HourFormat =
     parseInt(timeSlot.split(":")[0]) > 12
       ? parseInt(timeSlot.split(":")[0]) - 12

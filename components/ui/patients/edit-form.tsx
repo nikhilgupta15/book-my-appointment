@@ -25,6 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Patient } from "@prisma/client";
 import { updatePatient } from "@/lib/actions";
+import { toast } from "../use-toast";
 
 const formSchema = z.object({
   name: z
@@ -78,7 +79,14 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
     // ✅ This will be type-safe and validated.
     console.log(values);
 
-    await updatePatient(patient.id, values);
+    const feedback = await updatePatient(patient.id, values);
+
+    if (feedback && feedback.error) {
+      toast({
+        title: feedback.message,
+        variant: "destructive",
+      });
+    }
   }
 
   return (
