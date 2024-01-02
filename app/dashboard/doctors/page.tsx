@@ -1,6 +1,7 @@
 import { lusitana } from "@/components/ui/common/fonts";
 import Pagination from "@/components/ui/common/pagination";
 import Search from "@/components/ui/common/search";
+import { DoctorsTableSkeleton } from "@/components/ui/common/skeletons";
 import { CreateDoctor } from "@/components/ui/doctors/buttons";
 import { DoctorTable } from "@/components/ui/doctors/table";
 import { getDoctorsTotalPages } from "@/lib/data";
@@ -29,7 +30,7 @@ export default async function DoctorsPage({
         <CreateDoctor />
       </div>
       <div className="mt-8">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<DoctorsTableSkeleton />}>
           <DoctorTable query={query} currentPage={currentPage} />
         </Suspense>
       </div>

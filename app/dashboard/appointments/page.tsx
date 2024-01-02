@@ -3,6 +3,7 @@ import { AppointmentTable } from "@/components/ui/appointments/table";
 import { lusitana } from "@/components/ui/common/fonts";
 import Pagination from "@/components/ui/common/pagination";
 import Search from "@/components/ui/common/search";
+import { AppointmentsTableSkeleton } from "@/components/ui/common/skeletons";
 import { getAppointmentsTotalPages } from "@/lib/data";
 import React, { Suspense } from "react";
 
@@ -29,7 +30,7 @@ export default async function AppointmentsPage({
         <CreateAppointment />
       </div>
       <div className="mt-8">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<AppointmentsTableSkeleton />}>
           <AppointmentTable query={query} currentPage={currentPage} />
         </Suspense>
       </div>

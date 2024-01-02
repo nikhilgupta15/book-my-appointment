@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { convertTimeSlotHoursTo12HourFormat } from "./utils";
-import { timeSlots } from "./constants";
+import { ITEMS_PER_PAGE } from "./constants";
 
 const prisma = new PrismaClient();
 
@@ -34,8 +34,8 @@ export async function getDoctors(query: string, page: number) {
           },
         ],
       },
-      skip: (page - 1) * 6,
-      take: 6,
+      skip: (page - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
     });
     return data;
   } catch (error) {
@@ -73,8 +73,8 @@ export async function getPatients(query: string, page: number) {
           },
         ],
       },
-      skip: (page - 1) * 6,
-      take: 6,
+      skip: (page - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
     });
     return data;
   } catch (error) {
@@ -113,8 +113,8 @@ export async function getAppointments(query: string, page: number) {
           },
         ],
       },
-      skip: (page - 1) * 6,
-      take: 6,
+      skip: (page - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
     });
     return data;
   } catch (error) {
@@ -201,8 +201,8 @@ export async function getAppointmentsByDoctorId(
           },
         ],
       },
-      skip: (page - 1) * 6,
-      take: 6,
+      skip: (page - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
     });
     return appointment;
   } catch (error) {
@@ -247,8 +247,8 @@ export async function getAppointmentsByPatientId(
           },
         ],
       },
-      skip: (page - 1) * 6,
-      take: 6,
+      skip: (page - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
     });
     return appointment;
   } catch (error) {
@@ -288,7 +288,7 @@ export async function getPatientsTotalPages(query: string) {
         ],
       },
     });
-    return Math.ceil(data.length / 6);
+    return Math.ceil(data.length / ITEMS_PER_PAGE);
   } catch (error) {
     console.error(`${error}. Failed to Retreive Data.`);
     throw new Error(`${error}. Failed to Retreive Data.`);
@@ -326,7 +326,7 @@ export async function getDoctorsTotalPages(query: string) {
         ],
       },
     });
-    return Math.ceil(data.length / 6);
+    return Math.ceil(data.length / ITEMS_PER_PAGE);
   } catch (error) {
     console.error(`${error}. Failed to Retreive Data.`);
     throw new Error(`${error}. Failed to Retreive Data.`);
@@ -364,7 +364,7 @@ export async function getAppointmentsTotalPages(query: string) {
         ],
       },
     });
-    return Math.ceil(data.length / 6);
+    return Math.ceil(data.length / ITEMS_PER_PAGE);
   } catch (error) {
     console.error(`${error}. Failed to Retreive Data.`);
     throw new Error(`${error}. Failed to Retreive Data.`);
@@ -407,7 +407,7 @@ export async function getAppointmentsByDoctorIdTotalPages(
         ],
       },
     });
-    return Math.ceil(appointment.length / 6);
+    return Math.ceil(appointment.length / ITEMS_PER_PAGE);
   } catch (error) {
     console.error(`${error}. Failed to Retreive Data.`);
     throw new Error(`${error}. Failed to Retreive Data.`);
@@ -450,7 +450,7 @@ export async function getAppointmentsByPatientIdTotalPages(
         ],
       },
     });
-    return Math.ceil(appointment.length / 6);
+    return Math.ceil(appointment.length / ITEMS_PER_PAGE);
   } catch (error) {
     console.error(`${error}. Failed to Retreive Data.`);
     throw new Error(`${error}. Failed to Retreive Data.`);

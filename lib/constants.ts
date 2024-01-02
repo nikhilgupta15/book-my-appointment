@@ -23,3 +23,5 @@ export const specialities = [
   "NEUROLOGY",
   "ONCOLOGY",
 ];
+
+export const ITEMS_PER_PAGE = 5;

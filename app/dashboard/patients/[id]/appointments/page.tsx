@@ -2,6 +2,7 @@ import { AppointmentTableForDoctorsAndPatients } from "@/components/ui/common/ap
 import Breadcrumbs from "@/components/ui/common/breadcrumbs";
 import Pagination from "@/components/ui/common/pagination";
 import Search from "@/components/ui/common/search";
+import { AppointmentsTableSkeleton } from "@/components/ui/common/skeletons";
 import {
   getAppointmentsByPatientId,
   getAppointmentsByPatientIdTotalPages,
@@ -61,7 +62,7 @@ export default async function AppointmentsForPatientPage({
           <Search placeholder="Search Appointments..." />
         </div>
         <div className="mt-8">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<AppointmentsTableSkeleton />}>
             <AppointmentTableForDoctorsAndPatients
               appointments={appointments}
             />
