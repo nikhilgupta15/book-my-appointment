@@ -24,4 +24,6 @@ export const specialities = [
   "ONCOLOGY",
 ];
 
+export const appointmentStatus = ["SCHEDULED", "CANCELLED", "COMPLETED"];
+
 export const ITEMS_PER_PAGE = 5;

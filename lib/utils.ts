@@ -1,5 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { specialities } from "./constants";
+import { Speciality, Status } from "@prisma/client";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -66,3 +68,63 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     totalPages,
   ];
 };
+
+export function convertSpecialityStringToEnumValue(speciality: string) {
+  switch (speciality) {
+    case "GENERAL":
+      return Speciality.GENERAL;
+    case "CARDIOLOGY":
+      return Speciality.CARDIOLOGY;
+    case "NEUROLOGY":
+      return Speciality.NEUROLOGY;
+    case "ONCOLOGY":
+      return Speciality.ONCOLOGY;
+    case "ORTHOPEDICS":
+      return Speciality.ORTHOPEDICS;
+    default:
+      return Speciality.GENERAL;
+  }
+}
+
+export function convertSpecialityEnumToStringValue(speciality: Speciality) {
+  switch (speciality) {
+    case Speciality.GENERAL:
+      return "GENERAL";
+    case Speciality.CARDIOLOGY:
+      return "CARDIOLOGY";
+    case Speciality.NEUROLOGY:
+      return "NEUROLOGY";
+    case Speciality.ONCOLOGY:
+      return "ONCOLOGY";
+    case Speciality.ORTHOPEDICS:
+      return "ORTHOPEDICS";
+    default:
+      return "GENERAL";
+  }
+}
+
+export function convertStatusStringToEnumValue(status: string) {
+  switch (status) {
+    case "CANCELLED":
+      return Status.CANCELLED;
+    case "COMPLETED":
+      return Status.COMPLETED;
+    case "SCHEDULED":
+      return Status.SCHEDULED;
+    default:
+      return Status.SCHEDULED;
+  }
+}
+
+export function convertStatusEnumToStringValue(status: Status) {
+  switch (status) {
+    case Status.CANCELLED:
+      return "CANCELLED";
+    case Status.COMPLETED:
+      return "COMPLETED";
+    case Status.SCHEDULED:
+      return "SCHEDULED";
+    default:
+      return "SCHEDULED";
+  }
+}

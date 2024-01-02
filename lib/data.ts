@@ -1,6 +1,10 @@
-import { PrismaClient } from "@prisma/client";
-import { convertTimeSlotHoursTo12HourFormat } from "./utils";
-import { ITEMS_PER_PAGE } from "./constants";
+import { PrismaClient, Speciality, Status } from "@prisma/client";
+import {
+  convertSpecialityEnumToStringValue,
+  convertStatusEnumToStringValue,
+  convertTimeSlotHoursTo12HourFormat,
+} from "./utils";
+import { ITEMS_PER_PAGE, appointmentStatus, specialities } from "./constants";
 
 const prisma = new PrismaClient();
 
@@ -505,6 +509,89 @@ export async function getAvailableTimeSlotsByDoctorId(
       );
     });
     return bookedTimeSlots;
+  } catch (error) {
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
+  }
+}
+
+export async function getPatientsByDepartment() {
+  try {
+    const appointments = await prisma.appointment.findMany({
+      include: {
+        doctor: {
+          select: {
+            speciality: true,
+          },
+        },
+      },
+      where: {
+        status: {
+          notIn: [Status.CANCELLED, Status.COMPLETED],
+        },
+      },
+    });
+    let specialityMap = new Map<string, number>();
+
+    specialities.forEach((speciality) => specialityMap.set(speciality, 0));
+
+    //console.log(specialityMap);
+
+    appointments.forEach((appointment) => {
+      let speciality = convertSpecialityEnumToStringValue(
+        appointment.doctor.speciality
+      );
+
+      specialityMap.set(speciality, specialityMap.get(speciality)! + 1); //non-null assertion to remove the error that says that value is undefined
+    });
+    return Array.from(specialityMap);
+    //console.log(specialityMap);
+  } catch (error) {
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
+  }
+}
+
+export async function getDoctorsByDepartment() {
+  try {
+    const doctors = await prisma.doctor.findMany();
+
+    let specialityMap = new Map<string, number>();
+
+    specialities.forEach((speciality) => specialityMap.set(speciality, 0));
+
+    //console.log(specialityMap);
+
+    doctors.forEach((doctor) => {
+      let speciality = convertSpecialityEnumToStringValue(doctor.speciality);
+
+      specialityMap.set(speciality, specialityMap.get(speciality)! + 1); //non-null assertion to remove the error that says that value is undefined
+    });
+    return Array.from(specialityMap);
+    //console.log(specialityMap);
+  } catch (error) {
+    console.error(`${error}. Failed to Retreive Data.`);
+    throw new Error(`${error}. Failed to Retreive Data.`);
+  }
+}
+
+export async function getAppointmentsByStatus() {
+  try {
+    const appointments = await prisma.appointment.findMany();
+
+    let statusMap = new Map<string, number>();
+
+    appointmentStatus.forEach((status) => statusMap.set(status, 0));
+
+    //console.log(specialityMap);
+
+    appointments.forEach((appointment) => {
+      let status = convertStatusEnumToStringValue(appointment.status);
+
+      statusMap.set(status, statusMap.get(status)! + 1); //non-null assertion to remove the error that says that value is undefined
+    });
+    return Array.from(statusMap);
+    //console.log(specialityMap);
   } catch (error) {
     console.error(`${error}. Failed to Retreive Data.`);
     throw new Error(`${error}. Failed to Retreive Data.`);
