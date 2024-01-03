@@ -10,14 +10,14 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { Appointment, Status } from "@prisma/client";
+import { Appointment, Speciality, Status } from "@prisma/client";
 import { DeleteAppointment, UpdateAppointment } from "../appointments/buttons";
 import { lusitana } from "./fonts";
 
 export async function AppointmentTableForDoctorsAndPatients({
   appointments,
 }: {
-  appointments: Appointment[];
+  appointments: (Appointment & { doctor: { speciality: Speciality } })[];
 }) {
   return (
     <Table>
@@ -27,8 +27,9 @@ export async function AppointmentTableForDoctorsAndPatients({
           <TableHead>Appointment Id</TableHead>
           <TableHead>Patient Name</TableHead>
           <TableHead>Doctor Name</TableHead>
+          <TableHead>Department</TableHead>
           <TableHead>Date and Time</TableHead>
-          <TableHead>Description</TableHead>
+          {/* <TableHead>Description</TableHead> */}
           <TableHead>Status</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
@@ -39,10 +40,11 @@ export async function AppointmentTableForDoctorsAndPatients({
             <TableCell>{appointment.id}</TableCell>
             <TableCell>{appointment.patientName}</TableCell>
             <TableCell>{appointment.doctorName}</TableCell>
+            <TableCell>{appointment.doctor.speciality}</TableCell>
             <TableCell>
               {format(new Date(appointment.date), "dd/MM/yyyy HH:mm")}
             </TableCell>
-            <TableCell>{appointment.description}</TableCell>
+            {/* <TableCell>{appointment.description}</TableCell> */}
             <TableCell>
               <Badge className={setBadgeColor(appointment.status)}>
                 {appointment.status}

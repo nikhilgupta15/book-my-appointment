@@ -1,7 +1,9 @@
 import { PrismaClient, Speciality, Status } from "@prisma/client";
 import {
   convertSpecialityEnumToStringValue,
+  convertSpecialityStringToEnumValue,
   convertStatusEnumToStringValue,
+  convertStatusStringToEnumValue,
   convertTimeSlotHoursTo12HourFormat,
 } from "./utils";
 import { ITEMS_PER_PAGE, appointmentStatus, specialities } from "./constants";
@@ -87,13 +89,51 @@ export async function getPatients(query: string, page: number) {
   }
 }
 
-export async function getAppointments(query: string, page: number) {
+export async function getAppointments(
+  query: string,
+  page: number,
+  department: string,
+  status: string
+) {
+  const specialityFilter: Speciality[] =
+    department === "ALL" || department === ""
+      ? specialities.map((value) => convertSpecialityStringToEnumValue(value))
+      : [convertSpecialityStringToEnumValue(department)];
+
+  const statusFilter: Status[] =
+    status === "ALL" || status === ""
+      ? appointmentStatus.map((value) => convertStatusStringToEnumValue(value))
+      : [convertStatusStringToEnumValue(status)];
+
+  //console.log(specialityFilter);
+
   try {
     const data = await prisma.appointment.findMany({
       orderBy: {
         id: "asc",
       },
+      include: {
+        doctor: {
+          select: {
+            speciality: true,
+          },
+        },
+      },
       where: {
+        AND: [
+          {
+            doctor: {
+              speciality: {
+                in: specialityFilter,
+              },
+            },
+          },
+          {
+            status: {
+              in: statusFilter,
+            },
+          },
+        ],
         OR: [
           {
             id: {
@@ -172,10 +212,29 @@ export async function getAppointmentById(id: string) {
 export async function getAppointmentsByDoctorId(
   doctorId: string,
   query: string,
-  page: number
+  page: number,
+  department: string,
+  status: string
 ) {
+  const specialityFilter: Speciality[] =
+    department === "ALL" || department === ""
+      ? specialities.map((value) => convertSpecialityStringToEnumValue(value))
+      : [convertSpecialityStringToEnumValue(department)];
+
+  const statusFilter: Status[] =
+    status === "ALL" || status === ""
+      ? appointmentStatus.map((value) => convertStatusStringToEnumValue(value))
+      : [convertStatusStringToEnumValue(status)];
+
   try {
     const appointment = await prisma.appointment.findMany({
+      include: {
+        doctor: {
+          select: {
+            speciality: true,
+          },
+        },
+      },
       where: {
         doctorId: doctorId,
         AND: [
@@ -203,6 +262,18 @@ export async function getAppointmentsByDoctorId(
               },
             ],
           },
+          {
+            doctor: {
+              speciality: {
+                in: specialityFilter,
+              },
+            },
+          },
+          {
+            status: {
+              in: statusFilter,
+            },
+          },
         ],
       },
       skip: (page - 1) * ITEMS_PER_PAGE,
@@ -218,10 +289,29 @@ export async function getAppointmentsByDoctorId(
 export async function getAppointmentsByPatientId(
   patientId: string,
   query: string,
-  page: number
+  page: number,
+  department: string,
+  status: string
 ) {
+  const specialityFilter: Speciality[] =
+    department === "ALL" || department === ""
+      ? specialities.map((value) => convertSpecialityStringToEnumValue(value))
+      : [convertSpecialityStringToEnumValue(department)];
+
+  const statusFilter: Status[] =
+    status === "ALL" || status === ""
+      ? appointmentStatus.map((value) => convertStatusStringToEnumValue(value))
+      : [convertStatusStringToEnumValue(status)];
+
   try {
     const appointment = await prisma.appointment.findMany({
+      include: {
+        doctor: {
+          select: {
+            speciality: true,
+          },
+        },
+      },
       where: {
         patientId: patientId,
         AND: [
@@ -248,6 +338,18 @@ export async function getAppointmentsByPatientId(
                 },
               },
             ],
+          },
+          {
+            doctor: {
+              speciality: {
+                in: specialityFilter,
+              },
+            },
+          },
+          {
+            status: {
+              in: statusFilter,
+            },
           },
         ],
       },

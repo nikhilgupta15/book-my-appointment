@@ -1,9 +1,11 @@
 import { CreateAppointment } from "@/components/ui/appointments/buttons";
 import { AppointmentTable } from "@/components/ui/appointments/table";
+import Filter from "@/components/ui/common/filter";
 import { lusitana } from "@/components/ui/common/fonts";
 import Pagination from "@/components/ui/common/pagination";
 import Search from "@/components/ui/common/search";
 import { AppointmentsTableSkeleton } from "@/components/ui/common/skeletons";
+import { appointmentStatus, specialities } from "@/lib/constants";
 import { getAppointmentsTotalPages } from "@/lib/data";
 import React, { Suspense } from "react";
 
@@ -13,10 +15,16 @@ export default async function AppointmentsPage({
   searchParams: {
     query?: string;
     page?: string;
+    Department?: string;
+    Status?: string;
   };
 }) {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
+  const departmentFilter =
+    searchParams?.Department === "All" ? "" : searchParams.Department || "";
+  const statusFilter =
+    searchParams?.Status === "All" ? "" : searchParams.Status || "";
 
   const totalPages = await getAppointmentsTotalPages(query);
 
@@ -29,9 +37,18 @@ export default async function AppointmentsPage({
         <Search placeholder="Search Appointments..." />
         <CreateAppointment />
       </div>
+      <div className="mt-8 grid sm:grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+        <Filter data={[...specialities, "ALL"]} type="Department" />
+        <Filter data={[...appointmentStatus, "ALL"]} type="Status" />
+      </div>
       <div className="mt-8">
         <Suspense fallback={<AppointmentsTableSkeleton />}>
-          <AppointmentTable query={query} currentPage={currentPage} />
+          <AppointmentTable
+            query={query}
+            currentPage={currentPage}
+            departmentFilter={departmentFilter}
+            statusFilter={statusFilter}
+          />
         </Suspense>
       </div>
       <div className="mt-5 flex w-full justify-center">

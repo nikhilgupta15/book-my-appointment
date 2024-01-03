@@ -18,11 +18,20 @@ import { lusitana } from "../common/fonts";
 export async function AppointmentTable({
   query,
   currentPage,
+  departmentFilter,
+  statusFilter,
 }: {
   query: string;
   currentPage: number;
+  departmentFilter: string;
+  statusFilter: string;
 }) {
-  const appointments = await getAppointments(query, currentPage);
+  const appointments = await getAppointments(
+    query,
+    currentPage,
+    departmentFilter,
+    statusFilter
+  );
 
   ``;
   return (
@@ -33,8 +42,9 @@ export async function AppointmentTable({
           <TableHead>Appointment Id</TableHead>
           <TableHead>Patient Name</TableHead>
           <TableHead>Doctor Name</TableHead>
+          <TableHead>Department</TableHead>
           <TableHead>Date and Time</TableHead>
-          <TableHead>Description</TableHead>
+          {/* <TableHead>Description</TableHead> */}
           <TableHead>Status</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
@@ -46,10 +56,11 @@ export async function AppointmentTable({
               <TableCell>{appointment.id}</TableCell>
               <TableCell>{appointment.patientName}</TableCell>
               <TableCell>{appointment.doctorName}</TableCell>
+              <TableCell>{appointment.doctor.speciality}</TableCell>
               <TableCell>
                 {format(new Date(appointment.date), "dd/MM/yyyy HH:mm")}
               </TableCell>
-              <TableCell>{appointment.description}</TableCell>
+              {/* <TableCell>{appointment.description}</TableCell> */}
               <TableCell>
                 <Badge className={setBadgeColor(appointment.status)}>
                   {appointment.status}

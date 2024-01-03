@@ -1,8 +1,10 @@
 import { AppointmentTableForDoctorsAndPatients } from "@/components/ui/common/appointment-table";
 import Breadcrumbs from "@/components/ui/common/breadcrumbs";
+import Filter from "@/components/ui/common/filter";
 import Pagination from "@/components/ui/common/pagination";
 import Search from "@/components/ui/common/search";
 import { AppointmentsTableSkeleton } from "@/components/ui/common/skeletons";
+import { appointmentStatus, specialities } from "@/lib/constants";
 import {
   getAppointmentsByDoctorId,
   getAppointmentsByDoctorIdTotalPages,
@@ -19,13 +21,25 @@ export default async function AppointmentsForDoctorPage({
   searchParams: {
     query?: string;
     page?: string;
+    Department?: string;
+    Status?: string;
   };
 }) {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
+  const departmentFilter =
+    searchParams?.Department === "All" ? "" : searchParams.Department || "";
+  const statusFilter =
+    searchParams?.Status === "All" ? "" : searchParams.Status || "";
 
   const doctorData = getDoctorById(id);
-  const appointmentsData = getAppointmentsByDoctorId(id, query, currentPage);
+  const appointmentsData = getAppointmentsByDoctorId(
+    id,
+    query,
+    currentPage,
+    departmentFilter,
+    statusFilter
+  );
   const appointmentTotalPagesData = getAppointmentsByDoctorIdTotalPages(
     id,
     query
@@ -60,6 +74,10 @@ export default async function AppointmentsForDoctorPage({
       <div className="w-full">
         <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
           <Search placeholder="Search Appointments..." />
+        </div>
+        <div className="mt-8 grid sm:grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+          <Filter data={[...specialities, "ALL"]} type="Department" />
+          <Filter data={[...appointmentStatus, "ALL"]} type="Status" />
         </div>
         <div className="mt-8">
           <Suspense fallback={<AppointmentsTableSkeleton />}>
