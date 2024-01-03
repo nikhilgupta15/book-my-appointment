@@ -16,11 +16,13 @@ import { lusitana } from "../common/fonts";
 export async function DoctorTable({
   query,
   currentPage,
+  departmentFilter,
 }: {
   query: string;
   currentPage: number;
+  departmentFilter: string;
 }) {
-  const doctors = await getDoctors(query, currentPage);
+  const doctors = await getDoctors(query, currentPage, departmentFilter);
 
   return (
     <Table>

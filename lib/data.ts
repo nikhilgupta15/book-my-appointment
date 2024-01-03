@@ -10,13 +10,29 @@ import { ITEMS_PER_PAGE, appointmentStatus, specialities } from "./constants";
 
 const prisma = new PrismaClient();
 
-export async function getDoctors(query: string, page: number) {
+export async function getDoctors(
+  query: string,
+  page: number,
+  department: string
+) {
+  const specialityFilter: Speciality[] =
+    department === "ALL" || department === ""
+      ? specialities.map((value) => convertSpecialityStringToEnumValue(value))
+      : [convertSpecialityStringToEnumValue(department)];
+
   try {
     const data = await prisma.doctor.findMany({
       orderBy: {
         id: "asc",
       },
       where: {
+        AND: [
+          {
+            speciality: {
+              in: specialityFilter,
+            },
+          },
+        ],
         OR: [
           {
             name: {

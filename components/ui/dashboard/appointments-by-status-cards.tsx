@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { getAppointmentsByStatus } from "@/lib/data";
 import { Button } from "../button";
+import Link from "next/link";
 
 export async function AppointmentsByStatusCards() {
   const appointmentsByStatus = await getAppointmentsByStatus();
@@ -35,7 +36,9 @@ export async function AppointmentsByStatusCards() {
                     {value}
                   </div>
                   <div className="mt-8 flex justify-center items-center">
-                    <Button size={"sm"}>View All Appointments</Button>
+                    <Link href={`/dashboard/appointments?Status=${key}`}>
+                      <Button size={"sm"}>View All Appointments</Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>

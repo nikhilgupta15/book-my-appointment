@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { getDoctorsByDepartment } from "@/lib/data";
 import { Button } from "../button";
+import Link from "next/link";
 
 export async function DoctorsByDepartmentsCards() {
   const doctorsByDepartment = await getDoctorsByDepartment();
@@ -35,7 +36,9 @@ export async function DoctorsByDepartmentsCards() {
                     {value}
                   </div>
                   <div className="mt-8 flex justify-center items-center">
-                    <Button size={"sm"}>View All Doctors</Button>
+                    <Link href={`/dashboard/doctors?Department=${key}`}>
+                      <Button size={"sm"}>View All Doctors</Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
