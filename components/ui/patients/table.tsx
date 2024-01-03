@@ -46,7 +46,10 @@ export async function PatientTable({
               <TableCell>{patient.phone}</TableCell>
               <TableCell>{patient.address}</TableCell>
               <TableCell>
-                {format(new Date(patient.birthday), "dd/MM/yyyy")}
+                {format(
+                  new Date(patient.birthday).toISOString().split("T")[0],
+                  "dd/MM/yyyy"
+                )}
               </TableCell>
               <TableCell>
                 <Link

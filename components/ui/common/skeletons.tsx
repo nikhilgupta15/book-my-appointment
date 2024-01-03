@@ -120,6 +120,7 @@ export function AppointmentsTableSkeleton() {
             <TableHead>Appointment Id</TableHead>
             <TableHead>Patient Name</TableHead>
             <TableHead>Doctor Name</TableHead>
+            <TableHead>Department</TableHead>
             <TableHead>Date and Time</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Status</TableHead>
@@ -129,6 +130,9 @@ export function AppointmentsTableSkeleton() {
         <TableBody>
           {[1, 2, 3, 4, 5].map((num) => (
             <TableRow key={num}>
+              <TableCell>
+                <Skeleton className="h-4 w-[80px]" />
+              </TableCell>
               <TableCell>
                 <Skeleton className="h-4 w-[80px]" />
               </TableCell>

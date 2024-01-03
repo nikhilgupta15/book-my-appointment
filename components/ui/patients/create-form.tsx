@@ -25,6 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 import { createPatient } from "@/lib/actions";
 import { toast } from "../use-toast";
+import { useRef } from "react";
 
 const formSchema = z.object({
   name: z
@@ -61,7 +62,8 @@ const formSchema = z.object({
 });
 
 export function CreatePatientForm() {
-  // 1. Define your form.
+  const inputDateRef = useRef<HTMLInputElement>(null); // This is a reference to the input element which sets the date of birth
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -165,42 +167,16 @@ export function CreatePatientForm() {
           control={form.control}
           name="dateOfBirth"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date of Birth</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
+            <FormItem>
+              <FormLabel>Appointment Date</FormLabel>
+              <FormControl>
+                <Input
+                  type="date"
+                  max={new Date().toISOString().split("T")[0]}
+                  ref={inputDateRef}
+                  onChange={(e) => field.onChange(new Date(e.target.value))}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

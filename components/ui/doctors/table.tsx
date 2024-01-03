@@ -30,7 +30,7 @@ export async function DoctorTable({
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
-          <TableHead>Speciality</TableHead>
+          <TableHead>Department</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Phone</TableHead>
           <TableHead>Address</TableHead>
