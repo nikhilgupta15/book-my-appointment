@@ -36,7 +36,7 @@ const formSchema = z.object({
       message: "Name must be at least 1 characters.",
     }),
   speciality: z.string({
-    required_error: "Speciality is required.",
+    required_error: "Department is required.",
   }),
   phone: z
     .string({
@@ -160,16 +160,16 @@ export function CreateDoctorForm() {
           name="speciality"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Speciality</FormLabel>
+              <FormLabel>Department</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a speciality" {...field} />
+                    <SelectValue placeholder="Select a department" {...field} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Specialities</SelectLabel>
+                    <SelectLabel>Department</SelectLabel>
                     {specialities.map((speciality) => (
                       <SelectItem key={speciality} value={speciality}>
                         {speciality}
@@ -178,12 +178,16 @@ export function CreateDoctorForm() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <FormDescription>This is your specialization</FormDescription>
+              <FormDescription>
+                This is the department to which you belong to
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+          Submit
+        </Button>
       </form>
     </Form>
   );

@@ -168,7 +168,7 @@ export function CreatePatientForm() {
           name="dateOfBirth"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Appointment Date</FormLabel>
+              <FormLabel>Date of Birth</FormLabel>
               <FormControl>
                 <Input
                   type="date"
@@ -177,11 +177,14 @@ export function CreatePatientForm() {
                   onChange={(e) => field.onChange(new Date(e.target.value))}
                 />
               </FormControl>
+              <FormDescription>This is your date of birth</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+          Submit
+        </Button>
       </form>
     </Form>
   );

@@ -247,7 +247,9 @@ export function EditAppointmentForm({
         />
 
         <div className="flex justify-start items-center space-x-4">
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+            Submit
+          </Button>
           <MarkAsCompleteAppointment id={appointment.id} />
           <CancelAppointment id={appointment.id} />
         </div>

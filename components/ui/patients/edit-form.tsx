@@ -170,7 +170,7 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
           name="dateOfBirth"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Appointment Date</FormLabel>
+              <FormLabel>Date of Birth</FormLabel>
               <FormControl>
                 <Input
                   type="date"
@@ -180,11 +180,14 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
                   defaultValue={field.value.toISOString().split("T")[0]}
                 />
               </FormControl>
+              <FormDescription>This is your date of birth</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+          Submit
+        </Button>
       </form>
     </Form>
   );

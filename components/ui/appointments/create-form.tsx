@@ -237,7 +237,9 @@ export function CreateAppointmentForm({
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+          Submit
+        </Button>
       </form>
     </Form>
   );

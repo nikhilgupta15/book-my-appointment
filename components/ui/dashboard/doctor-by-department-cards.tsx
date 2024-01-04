@@ -37,7 +37,12 @@ export async function DoctorsByDepartmentsCards() {
                   </div>
                   <div className="mt-8 flex justify-center items-center">
                     <Link href={`/dashboard/doctors?Department=${key}`}>
-                      <Button size={"sm"}>View All Doctors</Button>
+                      <Button
+                        size={"sm"}
+                        className="bg-blue-600 hover:bg-blue-500"
+                      >
+                        View All Doctors
+                      </Button>
                     </Link>
                   </div>
                 </CardContent>

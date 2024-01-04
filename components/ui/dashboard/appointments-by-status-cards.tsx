@@ -37,7 +37,12 @@ export async function AppointmentsByStatusCards() {
                   </div>
                   <div className="mt-8 flex justify-center items-center">
                     <Link href={`/dashboard/appointments?Status=${key}`}>
-                      <Button size={"sm"}>View All Appointments</Button>
+                      <Button
+                        size={"sm"}
+                        className="bg-blue-600 hover:bg-blue-500"
+                      >
+                        View All Appointments
+                      </Button>
                     </Link>
                   </div>
                 </CardContent>

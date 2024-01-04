@@ -1,13 +1,22 @@
-import { GlobeAltIcon } from "@heroicons/react/24/outline";
+import { GlobeAltIcon, HeartIcon } from "@heroicons/react/24/solid";
 import { lusitana } from "../common/fonts";
+import Image from "next/image";
 
-export default function AcmeLogo() {
+export default function WebsiteLogo() {
   return (
     <div
-      className={`${lusitana.className} flex flex-row items-center leading-none text-white`}
+      className={`${lusitana.className} flex flex-row items-center gap-4 leading-none text-white`}
     >
-      <GlobeAltIcon className="h-12 w-12 rotate-[15deg]" />
-      <p className="text-[44px]">Acme</p>
+      <Image
+        src={"/website-logo.png"}
+        alt="website-logo"
+        height={50}
+        width={50}
+        className="hidden md:block rounded-md"
+      />
+      <p className="text-[24px] md:text-[30px] h-full w-full">
+        Book My Appointment
+      </p>
     </div>
   );
 }

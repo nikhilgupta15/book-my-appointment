@@ -101,12 +101,12 @@ export async function AppointmentTable({
 function setBadgeColor(status: Status) {
   switch (status) {
     case Status.SCHEDULED:
-      return "bg-yellow-500";
+      return "bg-yellow-500 hover:bg-yellow-600";
     case Status.COMPLETED:
-      return "bg-green-500";
+      return "bg-green-500 hover:bg-green-600";
     case Status.CANCELLED:
-      return "bg-red-500";
+      return "bg-red-500 hover:bg-red-600";
     default:
-      return "bg-gray-500";
+      return "bg-gray-500 hover:bg-gray-600";
   }
 }
