@@ -117,7 +117,7 @@ export async function createAppointment(data: AppointmentFormType) {
       },
     });
 
-    sendAppointmentEmail(
+    await sendAppointmentEmail(
       data.patientId,
       data.doctorId,
       data.appointmentDate,
@@ -333,49 +333,68 @@ async function sendAppointmentEmail(
   appointmentDate: Date,
   appointmentDescription: string
 ) {
-  const [patientData, doctorData] = await Promise.all([
-    getPatientById(patientId),
-    getDoctorById(doctorId),
-  ]);
+  try {
+    const [patientData, doctorData] = await Promise.all([
+      getPatientById(patientId),
+      getDoctorById(doctorId),
+    ]);
 
-  if (patientData?.email && doctorData?.email) {
-    const emailHtml = render(
-      AppointmentScheduledMail({
-        appointmentDate,
-        doctorData,
-        patientData,
-        appointmentDescription,
-      })
-    );
+    if (patientData?.email && doctorData?.email) {
+      const emailHtml = render(
+        AppointmentScheduledMail({
+          appointmentDate,
+          doctorData,
+          patientData,
+          appointmentDescription,
+        })
+      );
 
-    let mailData: mailData = {
-      to: doctorData.email,
-      cc: patientData.email,
-      subject: `New Appointment - ${patientData.name}`,
-      html: emailHtml,
-    };
+      let mailData: mailData = {
+        to: doctorData.email,
+        cc: patientData.email,
+        subject: `New Appointment - ${patientData.name}`,
+        html: emailHtml,
+      };
 
-    await sendEmail(mailData);
+      await sendEmail(mailData);
+    }
+  } catch (error) {
+    console.error("Email Error:", error);
+    throw new Error(`${error}. Failed to send email`);
   }
 }
 
 async function sendEmail(mailData: mailData) {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
-      pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
-    },
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
+        pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
+      },
+    });
 
-  const mailOptions = {
-    from: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
-    to: mailData.to,
-    cc: mailData.cc,
-    subject: mailData.subject,
-    html: mailData.html,
-  };
-  await transporter.sendMail(mailOptions);
+    const mailOptions = {
+      from: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
+      to: mailData.to,
+      cc: mailData.cc,
+      subject: mailData.subject,
+      html: mailData.html,
+    };
+    await new Promise((resolve, reject) => {
+      // send mail
+      transporter.sendMail(mailOptions, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(response);
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error(`${error}. Failed to send email`);
+  }
 }
