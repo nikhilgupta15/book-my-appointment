@@ -59,3 +59,10 @@ export type AppointmentFormType = {
   appointmentDate: Date;
   description: string;
 };
+
+export type mailData = {
+  to: string | string[];
+  cc?: string | string[];
+  subject: string;
+  html: string;
+};

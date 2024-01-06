@@ -5,10 +5,18 @@ import {
   AppointmentFormType,
   CreateDoctorFormType,
   CreatePatientFormType,
+  mailData,
 } from "./definitions";
 import { PrismaClient, Speciality, Status } from "@prisma/client";
-import { getAvailableTimeSlotsByDoctorId } from "./data";
+import {
+  getAvailableTimeSlotsByDoctorId,
+  getDoctorById,
+  getPatientById,
+} from "./data";
 import { convertTimeSlotHoursTo12HourFormat } from "./utils";
+import nodemailer from "nodemailer";
+import { render } from "@react-email/render";
+import { AppointmentScheduledMail } from "../components/ui/common/appointment-email";
 
 const prisma = new PrismaClient();
 
@@ -108,6 +116,13 @@ export async function createAppointment(data: AppointmentFormType) {
         status: Status.SCHEDULED,
       },
     });
+
+    sendAppointmentEmail(
+      data.patientId,
+      data.doctorId,
+      data.appointmentDate,
+      data.description
+    );
   } catch (error) {
     console.error("Database Error:", error);
     return {
@@ -310,4 +325,57 @@ export async function updateAppointmentStatus(id: string, status: Status) {
   }
   revalidatePath("/dashboard/appointments");
   redirect("/dashboard/appointments");
+}
+
+async function sendAppointmentEmail(
+  patientId: string,
+  doctorId: string,
+  appointmentDate: Date,
+  appointmentDescription: string
+) {
+  const [patientData, doctorData] = await Promise.all([
+    getPatientById(patientId),
+    getDoctorById(doctorId),
+  ]);
+
+  if (patientData?.email && doctorData?.email) {
+    const emailHtml = render(
+      AppointmentScheduledMail({
+        appointmentDate,
+        doctorData,
+        patientData,
+        appointmentDescription,
+      })
+    );
+
+    let mailData: mailData = {
+      to: doctorData.email,
+      cc: patientData.email,
+      subject: `New Appointment - ${patientData.name}`,
+      html: emailHtml,
+    };
+
+    await sendEmail(mailData);
+  }
+}
+
+async function sendEmail(mailData: mailData) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
+      pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
+    to: mailData.to,
+    cc: mailData.cc,
+    subject: mailData.subject,
+    html: mailData.html,
+  };
+  await transporter.sendMail(mailOptions);
 }
