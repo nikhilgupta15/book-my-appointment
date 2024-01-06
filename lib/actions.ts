@@ -117,7 +117,7 @@ export async function createAppointment(data: AppointmentFormType) {
       },
     });
 
-    await sendAppointmentEmail(
+    sendAppointmentEmail(
       data.patientId,
       data.doctorId,
       data.appointmentDate,
@@ -356,7 +356,7 @@ async function sendAppointmentEmail(
         html: emailHtml,
       };
 
-      await sendEmail(mailData);
+      sendEmail(mailData);
     }
   } catch (error) {
     console.error("Email Error:", error);
@@ -383,7 +383,7 @@ async function sendEmail(mailData: mailData) {
       subject: mailData.subject,
       html: mailData.html,
     };
-    await new Promise((resolve, reject) => {
+    new Promise((resolve, reject) => {
       // send mail
       transporter.sendMail(mailOptions, (err, response) => {
         if (err) {
