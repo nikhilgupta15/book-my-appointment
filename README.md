@@ -23,13 +23,13 @@ https://bookmyappointment.vercel.app/
 - Authentication. Separate Login Profiles for patients and doctors
 
 ## Tech Stack
-Next.js
-React
-Typescript
-Javascript
-PostgreSQL
-Prisma
-Vercel
+- Next.js
+- React
+- Typescript
+- Javascript
+- PostgreSQL
+- Prisma
+- Vercel
 
 
 ## Getting Started
