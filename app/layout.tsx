@@ -2,6 +2,8 @@ import "./globals.css";
 import { inter } from "../components/ui/common/fonts";
 import { Toaster } from "@/components/ui/toaster";
 import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: {
@@ -22,6 +24,8 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <main>{children}</main>
         <Toaster />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
