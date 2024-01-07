@@ -5,6 +5,11 @@ import { PatientsByDepartmentsCards } from "@/components/ui/dashboard/patient-by
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DoctorsByDepartmentsCards } from "@/components/ui/dashboard/doctor-by-department-cards";
 import { AppointmentsByStatusCards } from "@/components/ui/dashboard/appointments-by-status-cards";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default async function Dashboard() {
   return (

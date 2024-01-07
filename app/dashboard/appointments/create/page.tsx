@@ -1,6 +1,11 @@
 import { CreateAppointmentForm } from "@/components/ui/appointments/create-form";
 import Breadcrumbs from "@/components/ui/common/breadcrumbs";
 import { getAllDoctors, getAllPatients } from "@/lib/data";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Create Appointment",
+};
 
 export default async function AppointmentCreatePage() {
   const patientData = getAllPatients();

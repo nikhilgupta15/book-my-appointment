@@ -3,6 +3,11 @@ import Breadcrumbs from "@/components/ui/common/breadcrumbs";
 import { getAllDoctors, getAllPatients, getAppointmentById } from "@/lib/data";
 import { Status } from "@prisma/client";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Edit Appointment",
+};
 
 export default async function AppointmentEditPage({
   params: { id },

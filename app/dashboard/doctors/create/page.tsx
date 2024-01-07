@@ -1,6 +1,12 @@
 import Breadcrumbs from "@/components/ui/common/breadcrumbs";
 import { CreateDoctorForm } from "@/components/ui/doctors/create-form";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Create Doctor",
+};
+
 export default async function DoctorCreatePage() {
   return (
     <main>

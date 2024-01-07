@@ -7,7 +7,12 @@ import Search from "@/components/ui/common/search";
 import { AppointmentsTableSkeleton } from "@/components/ui/common/skeletons";
 import { appointmentStatus, specialities } from "@/lib/constants";
 import { getAppointmentsTotalPages } from "@/lib/data";
+import { Metadata } from "next";
 import React, { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Appointments",
+};
 
 export default async function AppointmentsPage({
   searchParams,

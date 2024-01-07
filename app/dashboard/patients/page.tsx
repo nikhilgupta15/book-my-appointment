@@ -5,7 +5,12 @@ import { PatientsTableSkeleton } from "@/components/ui/common/skeletons";
 import { CreatePatient } from "@/components/ui/patients/buttons";
 import { PatientTable } from "@/components/ui/patients/table";
 import { getPatientsTotalPages } from "@/lib/data";
+import { Metadata } from "next";
 import React, { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Patients",
+};
 
 export default async function PatientsPage({
   searchParams,

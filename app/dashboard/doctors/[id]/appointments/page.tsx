@@ -10,8 +10,20 @@ import {
   getAppointmentsByDoctorIdTotalPages,
   getDoctorById,
 } from "@/lib/data";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
+
+export async function generateMetadata({
+  params: { id },
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const doctor = await getDoctorById(id);
+  return {
+    title: `Appointments | Dr. ${doctor?.name}`,
+  };
+}
 
 export default async function AppointmentsForDoctorPage({
   params: { id },

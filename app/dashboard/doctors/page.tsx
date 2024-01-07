@@ -7,7 +7,12 @@ import { CreateDoctor } from "@/components/ui/doctors/buttons";
 import { DoctorTable } from "@/components/ui/doctors/table";
 import { specialities } from "@/lib/constants";
 import { getDoctorsTotalPages } from "@/lib/data";
+import { Metadata } from "next";
 import React, { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Doctors",
+};
 
 export default async function DoctorsPage({
   searchParams,
