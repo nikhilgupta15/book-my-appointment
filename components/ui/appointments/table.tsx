@@ -14,6 +14,7 @@ import { DeleteAppointment, UpdateAppointment } from "./buttons";
 import { Badge } from "@/components/ui/badge";
 import { Status } from "@prisma/client";
 import { lusitana } from "../common/fonts";
+import { formatDate } from "@/lib/utils";
 
 export async function AppointmentTable({
   query,
@@ -57,9 +58,7 @@ export async function AppointmentTable({
               <TableCell>{appointment.patientName}</TableCell>
               <TableCell>{appointment.doctorName}</TableCell>
               <TableCell>{appointment.doctor.speciality}</TableCell>
-              <TableCell>
-                {format(new Date(appointment.date), "dd/MM/yyyy HH:mm")}
-              </TableCell>
+              <TableCell>{formatDate(appointment.date)}</TableCell>
               {/* <TableCell>{appointment.description}</TableCell> */}
               <TableCell>
                 <Badge className={setBadgeColor(appointment.status)}>

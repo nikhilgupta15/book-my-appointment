@@ -128,3 +128,16 @@ export function convertStatusEnumToStringValue(status: Status) {
       return "SCHEDULED";
   }
 }
+
+export const formatDate = (date: Date) => {
+  const dateInString = date.toLocaleDateString("en-US", {
+    timeZone: "IST",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+
+  return dateInString;
+};
