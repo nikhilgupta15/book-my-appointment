@@ -6,7 +6,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Create Appointment",
 };
-
+export const dynamic = "force-dynamic";
 export default async function AppointmentCreatePage() {
   const patientData = getAllPatients();
   const doctorData = getAllDoctors();
