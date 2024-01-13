@@ -139,5 +139,19 @@ export const formatDate = (date: Date) => {
     minute: "numeric",
   });
 
-  return dateInString;
+  return dateInString + " IST";
+};
+
+export const formatDateForAppointmentEmails = (date: Date) => {
+  const dateInString = date.toLocaleDateString("en-US", {
+    timeZone: "IST",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    weekday: "long",
+  });
+
+  return dateInString + " IST";
 };

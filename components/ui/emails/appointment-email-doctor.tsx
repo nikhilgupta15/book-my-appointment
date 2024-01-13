@@ -1,3 +1,4 @@
+import { formatDateForAppointmentEmails } from "@/lib/utils";
 import { Doctor, Patient } from "@prisma/client";
 import {
   Body,
@@ -19,7 +20,7 @@ import * as React from "react";
 const imagePath =
   "https://bookmyappointment.vercel.app/_next/image?url=%2Fwebsite-logo.png&w=128&q=75";
 
-export const AppointmentScheduledMail = ({
+export const AppointmentScheduledMailForDoctor = ({
   appointmentDate,
   patientData,
   doctorData,
@@ -44,7 +45,7 @@ export const AppointmentScheduledMail = ({
             <Text style={paragraph}>Dear Dr. {doctorName},</Text>
             <Text style={paragraph}>
               This email is to confirm your appointment with {patientName} on{" "}
-              <b>{format(appointmentDate, "PPPPp")}</b>.
+              <b>{formatDateForAppointmentEmails(appointmentDate)}</b>.
             </Text>
             <Text>Patient Details: </Text>
             <Text>
@@ -92,7 +93,7 @@ export const AppointmentScheduledMail = ({
   );
 };
 
-export default AppointmentScheduledMail;
+export default AppointmentScheduledMailForDoctor;
 
 const main = {
   backgroundColor: "#dbddde",
@@ -101,28 +102,12 @@ const main = {
   padding: "10px",
 };
 
-const sectionLogo = {
-  padding: "0 40px",
-};
-
-const headerBlue = {
-  marginTop: "-1px",
-};
-
 const container = {
   margin: "30px auto",
   width: "610px",
   backgroundColor: "#fff",
   borderRadius: 5,
   overflow: "hidden",
-};
-
-const containerContact = {
-  backgroundColor: "#f0fcff",
-  width: "90%",
-  borderRadius: "5px",
-  overflow: "hidden",
-  paddingLeft: "20px",
 };
 
 const heading = {
@@ -136,19 +121,10 @@ const paragraphContent = {
   padding: "0 40px",
 };
 
-const paragraphList = {
-  paddingLeft: 40,
-};
-
 const paragraph = {
   fontSize: "14px",
   lineHeight: "22px",
   color: "#3c4043",
-};
-
-const link = {
-  ...paragraph,
-  color: "#004dcf",
 };
 
 const hr = {

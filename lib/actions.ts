@@ -16,7 +16,10 @@ import {
 import { convertTimeSlotHoursTo12HourFormat } from "./utils";
 import nodemailer from "nodemailer";
 import { render } from "@react-email/render";
-import { AppointmentScheduledMail } from "../components/ui/common/appointment-email";
+import { AppointmentScheduledMailForDoctor } from "../components/ui/emails/appointment-email-doctor";
+import App from "next/app";
+import AppointmentScheduledMailForPatient from "@/components/ui/emails/appointment-email-patient";
+import { send } from "process";
 
 const prisma = new PrismaClient();
 
@@ -344,8 +347,8 @@ async function sendAppointmentEmail(
     ]);
 
     if (patientData?.email && doctorData?.email) {
-      const emailHtml = render(
-        AppointmentScheduledMail({
+      const emailHtmlForDoctor = render(
+        AppointmentScheduledMailForDoctor({
           appointmentDate,
           doctorData,
           patientData,
@@ -353,14 +356,28 @@ async function sendAppointmentEmail(
         })
       );
 
-      let mailData: mailData = {
+      const emailHtmlForPatient = render(
+        AppointmentScheduledMailForPatient({
+          appointmentDate,
+          doctorData,
+          patientData,
+        })
+      );
+
+      let mailDataForDoctor: mailData = {
         to: doctorData.email,
-        cc: patientData.email,
         subject: `New Appointment - ${patientData.name}`,
-        html: emailHtml,
+        html: emailHtmlForDoctor,
       };
 
-      sendEmail(mailData);
+      let mailDataForPatient: mailData = {
+        to: patientData.email,
+        subject: `Appointment Confirmation - ${doctorData.name}`,
+        html: emailHtmlForPatient,
+      };
+
+      sendEmail(mailDataForDoctor);
+      sendEmail(mailDataForPatient);
     }
   } catch (error) {
     console.error("Email Error:", error);
