@@ -121,12 +121,12 @@ export async function createAppointment(data: AppointmentFormType) {
 
     //console.log(Date.now());
 
-    // sendAppointmentEmail(
-    //   data.patientId,
-    //   data.doctorId,
-    //   data.appointmentDate,
-    //   data.description
-    // );
+    sendAppointmentEmail(
+      data.patientId,
+      data.doctorId,
+      data.appointmentDate,
+      data.description
+    );
   } catch (error) {
     console.error("Database Error:", error);
     return {
@@ -331,75 +331,66 @@ export async function updateAppointmentStatus(id: string, status: Status) {
   redirect("/dashboard/appointments");
 }
 
-// async function sendAppointmentEmail(
-//   patientId: string,
-//   doctorId: string,
-//   appointmentDate: Date,
-//   appointmentDescription: string
-// ) {
-//   try {
-//     const [patientData, doctorData] = await Promise.all([
-//       getPatientById(patientId),
-//       getDoctorById(doctorId),
-//     ]);
+async function sendAppointmentEmail(
+  patientId: string,
+  doctorId: string,
+  appointmentDate: Date,
+  appointmentDescription: string
+) {
+  try {
+    const [patientData, doctorData] = await Promise.all([
+      getPatientById(patientId),
+      getDoctorById(doctorId),
+    ]);
 
-//     if (patientData?.email && doctorData?.email) {
-//       const emailHtml = render(
-//         AppointmentScheduledMail({
-//           appointmentDate,
-//           doctorData,
-//           patientData,
-//           appointmentDescription,
-//         })
-//       );
+    if (patientData?.email && doctorData?.email) {
+      const emailHtml = render(
+        AppointmentScheduledMail({
+          appointmentDate,
+          doctorData,
+          patientData,
+          appointmentDescription,
+        })
+      );
 
-//       let mailData: mailData = {
-//         to: doctorData.email,
-//         cc: patientData.email,
-//         subject: `New Appointment - ${patientData.name}`,
-//         html: emailHtml,
-//       };
+      let mailData: mailData = {
+        to: doctorData.email,
+        cc: patientData.email,
+        subject: `New Appointment - ${patientData.name}`,
+        html: emailHtml,
+      };
 
-//       sendEmail(mailData);
-//     }
-//   } catch (error) {
-//     console.error("Email Error:", error);
-//     throw new Error(`${error}. Failed to send email`);
-//   }
-// }
+      sendEmail(mailData);
+    }
+  } catch (error) {
+    console.error("Email Error:", error);
+    throw new Error(`${error}. Failed to send email`);
+  }
+}
 
-// async function sendEmail(mailData: mailData) {
-//   try {
-//     const transporter = nodemailer.createTransport({
-//       host: "smtp.gmail.com",
-//       port: 465,
-//       secure: true,
-//       auth: {
-//         user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
-//         pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
-//       },
-//     });
+function sendEmail(mailData: mailData) {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
+        pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
+      },
+    });
 
-//     const mailOptions = {
-//       from: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
-//       to: mailData.to,
-//       cc: mailData.cc,
-//       subject: mailData.subject,
-//       html: mailData.html,
-//     };
-//     new Promise((resolve, reject) => {
-//       // send mail
-//       transporter.sendMail(mailOptions, (err, response) => {
-//         //console.log(Date.now());
-//         if (err) {
-//           reject(err);
-//         } else {
-//           resolve(response);
-//         }
-//       });
-//     });
-//   } catch (error) {
-//     console.error("Database Error:", error);
-//     throw new Error(`${error}. Failed to send email`);
-//   }
-// }
+    const mailOptions = {
+      from: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
+      to: mailData.to,
+      cc: mailData.cc,
+      subject: mailData.subject,
+      html: mailData.html,
+    };
+
+    transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error(`${error}. Failed to send email`);
+  }
+}
