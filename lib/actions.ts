@@ -20,6 +20,7 @@ import { AppointmentScheduledMailForDoctor } from "../components/ui/emails/appoi
 import App from "next/app";
 import AppointmentScheduledMailForPatient from "@/components/ui/emails/appointment-email-patient";
 import { send } from "process";
+import { error } from "console";
 
 const prisma = new PrismaClient();
 
@@ -381,7 +382,7 @@ async function sendAppointmentEmail(
     }
   } catch (error) {
     console.error("Email Error:", error);
-    throw new Error(`${error}. Failed to send email`);
+    //throw new Error(`${error}. Failed to send email`);
   }
 }
 
@@ -395,6 +396,7 @@ function sendEmail(mailData: mailData) {
         user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
         pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
       },
+      greetingTimeout: 10000,
     });
 
     const mailOptions = {
@@ -405,9 +407,16 @@ function sendEmail(mailData: mailData) {
       html: mailData.html,
     };
 
-    transporter.sendMail(mailOptions);
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        throw new Error(`${error}. Failed to send email`);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error(`${error}. Failed to send email`);
+    //throw new Error(`${error}. Failed to send email`);
   }
 }
