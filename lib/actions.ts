@@ -5,7 +5,7 @@ import {
   AppointmentFormType,
   CreateDoctorFormType,
   CreatePatientFormType,
-  mailData,
+  emailTemplateParams,
 } from "./definitions";
 import { PrismaClient, Speciality, Status } from "@prisma/client";
 import {
@@ -13,16 +13,18 @@ import {
   getDoctorById,
   getPatientById,
 } from "./data";
-import { convertTimeSlotHoursTo12HourFormat } from "./utils";
-import nodemailer from "nodemailer";
-import { render } from "@react-email/render";
-import { AppointmentScheduledMailForDoctor } from "../components/ui/emails/appointment-email-doctor";
-import App from "next/app";
-import AppointmentScheduledMailForPatient from "@/components/ui/emails/appointment-email-patient";
-import { send } from "process";
-import { error } from "console";
+import {
+  convertTimeSlotHoursTo12HourFormat,
+  formatDateForAppointmentEmails,
+} from "./utils";
+import emailjs from "@emailjs/nodejs";
+import { format } from "date-fns";
 
 const prisma = new PrismaClient();
+const SERVICE_ID: string = process.env.NEXT_SERVICE_ID || "";
+const TEMPLATE_ID: string = process.env.NEXT_TEMPLATE_ID || "";
+const PUBLIC_KEY: string = process.env.NEXT_PUBLIC_KEY || "";
+const PRIVATE_KEY: string = process.env.NEXT_PRIVATE_KEY || "";
 
 export async function createDoctor(data: CreateDoctorFormType) {
   try {
@@ -347,76 +349,77 @@ async function sendAppointmentEmail(
       getDoctorById(doctorId),
     ]);
 
-    if (patientData?.email && doctorData?.email) {
-      const emailHtmlForDoctor = render(
-        AppointmentScheduledMailForDoctor({
-          appointmentDate,
-          doctorData,
-          patientData,
-          appointmentDescription,
-        })
-      );
+    const doctorAppointmentEmailTemplateParams = {
+      To: doctorData?.email || "",
+      patientName: patientData?.name,
+      patientEmail: patientData?.email || "",
+      patientBirthday: format(
+        new Date(patientData?.birthday || Date.now())
+          .toISOString()
+          .split("T")[0],
+        "dd/MM/yyyy"
+      ),
+      patientMobile: patientData?.phone || "",
+      appointmentDate: formatDateForAppointmentEmails(appointmentDate),
+      appointmentDescription: appointmentDescription,
+      doctorName: doctorData?.name,
+    };
 
-      const emailHtmlForPatient = render(
-        AppointmentScheduledMailForPatient({
-          appointmentDate,
-          doctorData,
-          patientData,
-        })
-      );
-
-      let mailDataForDoctor: mailData = {
-        to: doctorData.email,
-        subject: `New Appointment - ${patientData.name}`,
-        html: emailHtmlForDoctor,
-      };
-
-      let mailDataForPatient: mailData = {
-        to: patientData.email,
-        subject: `Appointment Confirmation - ${doctorData.name}`,
-        html: emailHtmlForPatient,
-      };
-
-      sendEmail(mailDataForDoctor);
-      sendEmail(mailDataForPatient);
-    }
+    sendEmail(doctorAppointmentEmailTemplateParams);
   } catch (error) {
     console.error("Email Error:", error);
     //throw new Error(`${error}. Failed to send email`);
   }
 }
 
-function sendEmail(mailData: mailData) {
-  try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
-        pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
+function sendEmail(templateParams: emailTemplateParams) {
+  emailjs
+    .send(SERVICE_ID, TEMPLATE_ID, templateParams, {
+      publicKey: PUBLIC_KEY,
+      privateKey: PRIVATE_KEY,
+    })
+    .then(
+      (result) => {
+        console.log(result.text);
       },
-      greetingTimeout: 10000,
-    });
-
-    const mailOptions = {
-      from: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
-      to: mailData.to,
-      cc: mailData.cc,
-      subject: mailData.subject,
-      html: mailData.html,
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
+      (error) => {
+        console.log(error.text);
         throw new Error(`${error}. Failed to send email`);
-      } else {
-        console.log("Email sent: " + info.response);
       }
-    });
-  } catch (error) {
-    console.error("Database Error:", error);
-    //throw new Error(`${error}. Failed to send email`);
-  }
+    );
 }
+
+// function sendEmail(mailData: mailData) {
+//   try {
+//     const transporter = nodemailer.createTransport({
+//       host: "smtp.gmail.com",
+//       port: 465,
+//       secure: true,
+//       auth: {
+//         user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
+//         pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
+//       },
+//       greetingTimeout: 10000,
+//     });
+
+//     const mailOptions = {
+//       from: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
+//       to: mailData.to,
+//       cc: mailData.cc,
+//       subject: mailData.subject,
+//       html: mailData.html,
+//     };
+
+//     transporter.sendMail(mailOptions, (error, info) => {
+//       if (error) {
+//         console.log(error);
+//         throw new Error(`${error}. Failed to send email`);
+//       } else {
+//         console.log("Email sent: " + info.response);
+//       }
+//     });
+//   } catch (error) {
+//     console.error("Database Error:", error);
+//     //throw new Error(`${error}. Failed to send email`);
+//   }
+// }

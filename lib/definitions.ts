@@ -66,3 +66,20 @@ export type mailData = {
   subject: string;
   html: string;
 };
+
+export type emailTemplateParams = {
+  To: string;
+
+  patientName?: string;
+  patientEmail?: string;
+  patientBirthday?: string;
+  patientMobile?: string;
+
+  doctorName?: string;
+  doctorEmail?: string;
+  doctorPhone?: string;
+  doctorAddress?: string;
+
+  appointmentDate?: string;
+  appointmentDescription?: string;
+};
