@@ -27,3 +27,15 @@ export const specialities = [
 export const appointmentStatus = ["SCHEDULED", "CANCELLED", "COMPLETED"];
 
 export const ITEMS_PER_PAGE = 5;
+
+export const SERVICE_ID: string = process.env.NEXT_SERVICE_ID || "";
+
+export const TEMPLATE_ID_APPOINTMENT_DOCTOR: string =
+  process.env.NEXT_TEMPLATE_ID_APPOINTMENT_DOCTOR || "";
+
+export const TEMPLATE_ID_APPOINTMENT_PATIENT: string =
+  process.env.NEXT_TEMPLATE_ID_APPOINTMENT_PATIENT || "";
+
+export const PUBLIC_KEY: string = process.env.NEXT_PUBLIC_KEY || "";
+
+export const PRIVATE_KEY: string = process.env.NEXT_PRIVATE_KEY || "";

@@ -19,12 +19,15 @@ import {
 } from "./utils";
 import emailjs from "@emailjs/nodejs";
 import { format } from "date-fns";
+import {
+  PRIVATE_KEY,
+  PUBLIC_KEY,
+  SERVICE_ID,
+  TEMPLATE_ID_APPOINTMENT_DOCTOR,
+  TEMPLATE_ID_APPOINTMENT_PATIENT,
+} from "./constants";
 
 const prisma = new PrismaClient();
-const SERVICE_ID: string = process.env.NEXT_SERVICE_ID || "";
-const TEMPLATE_ID: string = process.env.NEXT_TEMPLATE_ID || "";
-const PUBLIC_KEY: string = process.env.NEXT_PUBLIC_KEY || "";
-const PRIVATE_KEY: string = process.env.NEXT_PRIVATE_KEY || "";
 
 export async function createDoctor(data: CreateDoctorFormType) {
   try {
@@ -365,16 +368,33 @@ async function sendAppointmentEmail(
       doctorName: doctorData?.name,
     };
 
-    sendEmail(doctorAppointmentEmailTemplateParams);
+    const patientAppointmentEmailTemplateParams = {
+      To: patientData?.email || "",
+      doctorName: doctorData?.name,
+      doctorAddress: doctorData?.address || "",
+
+      patientName: patientData?.name,
+
+      appointmentDate: formatDateForAppointmentEmails(appointmentDate),
+    };
+
+    sendEmail(
+      doctorAppointmentEmailTemplateParams,
+      TEMPLATE_ID_APPOINTMENT_DOCTOR
+    );
+    sendEmail(
+      patientAppointmentEmailTemplateParams,
+      TEMPLATE_ID_APPOINTMENT_PATIENT
+    );
   } catch (error) {
     console.error("Email Error:", error);
     //throw new Error(`${error}. Failed to send email`);
   }
 }
 
-function sendEmail(templateParams: emailTemplateParams) {
+function sendEmail(templateParams: emailTemplateParams, templateId: string) {
   emailjs
-    .send(SERVICE_ID, TEMPLATE_ID, templateParams, {
+    .send(SERVICE_ID, templateId, templateParams, {
       publicKey: PUBLIC_KEY,
       privateKey: PRIVATE_KEY,
     })
@@ -388,38 +408,3 @@ function sendEmail(templateParams: emailTemplateParams) {
       }
     );
 }
-
-// function sendEmail(mailData: mailData) {
-//   try {
-//     const transporter = nodemailer.createTransport({
-//       host: "smtp.gmail.com",
-//       port: 465,
-//       secure: true,
-//       auth: {
-//         user: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
-//         pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
-//       },
-//       greetingTimeout: 10000,
-//     });
-
-//     const mailOptions = {
-//       from: process.env.NEXT_PUBLIC_EMAIL_USERNAME,
-//       to: mailData.to,
-//       cc: mailData.cc,
-//       subject: mailData.subject,
-//       html: mailData.html,
-//     };
-
-//     transporter.sendMail(mailOptions, (error, info) => {
-//       if (error) {
-//         console.log(error);
-//         throw new Error(`${error}. Failed to send email`);
-//       } else {
-//         console.log("Email sent: " + info.response);
-//       }
-//     });
-//   } catch (error) {
-//     console.error("Database Error:", error);
-//     //throw new Error(`${error}. Failed to send email`);
-//   }
-// }
