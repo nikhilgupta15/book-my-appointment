@@ -39,3 +39,8 @@ export const TEMPLATE_ID_APPOINTMENT_PATIENT: string =
 export const PUBLIC_KEY: string = process.env.NEXT_PUBLIC_KEY || "";
 
 export const PRIVATE_KEY: string = process.env.NEXT_PRIVATE_KEY || "";
+
+export const baseURL: string =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://bookmyappointment.vercel.app";

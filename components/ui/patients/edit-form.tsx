@@ -62,7 +62,13 @@ const formSchema = z.object({
   }),
 });
 
-export function EditPatientForm({ patient }: { patient: Patient }) {
+export function EditPatientForm({
+  patient,
+  isEditable,
+}: {
+  patient: Patient;
+  isEditable: boolean;
+}) {
   const inputDateRef = useRef<HTMLInputElement>(null); // This is a reference to the input element which sets the date of birth.
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -98,6 +104,7 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
         <FormField
           control={form.control}
           name="name"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
@@ -116,6 +123,7 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
         <FormField
           control={form.control}
           name="phone"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Phone</FormLabel>
@@ -134,6 +142,7 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
         <FormField
           control={form.control}
           name="email"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
@@ -152,6 +161,7 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
         <FormField
           control={form.control}
           name="address"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Address</FormLabel>
@@ -168,6 +178,7 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
         <FormField
           control={form.control}
           name="dateOfBirth"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Date of Birth</FormLabel>
@@ -178,6 +189,7 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
                   ref={inputDateRef}
                   onChange={(e) => field.onChange(new Date(e.target.value))}
                   defaultValue={field.value.toISOString().split("T")[0]}
+                  disabled={!isEditable}
                 />
               </FormControl>
               <FormDescription>This is your date of birth</FormDescription>
@@ -185,9 +197,11 @@ export function EditPatientForm({ patient }: { patient: Patient }) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
-          Submit
-        </Button>
+        {isEditable && (
+          <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+            Submit
+          </Button>
+        )}
       </form>
     </Form>
   );

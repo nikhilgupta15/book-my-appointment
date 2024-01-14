@@ -67,11 +67,13 @@ export type emailTemplateParams = {
   patientEmail?: string;
   patientBirthday?: string;
   patientMobile?: string;
+  patientUrl?: string;
 
   doctorName?: string;
   doctorEmail?: string;
   doctorPhone?: string;
   doctorAddress?: string;
+  doctorUrl?: string;
 
   appointmentDate?: string;
   appointmentDescription?: string;

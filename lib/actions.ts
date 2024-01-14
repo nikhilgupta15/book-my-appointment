@@ -25,6 +25,7 @@ import {
   SERVICE_ID,
   TEMPLATE_ID_APPOINTMENT_DOCTOR,
   TEMPLATE_ID_APPOINTMENT_PATIENT,
+  baseURL,
 } from "./constants";
 
 const prisma = new PrismaClient();
@@ -363,9 +364,12 @@ async function sendAppointmentEmail(
         "dd/MM/yyyy"
       ),
       patientMobile: patientData?.phone || "",
+
       appointmentDate: formatDateForAppointmentEmails(appointmentDate),
       appointmentDescription: appointmentDescription,
+
       doctorName: doctorData?.name,
+      doctorUrl: `${baseURL}/dashboard/doctors/${doctorId}/view`,
     };
 
     const patientAppointmentEmailTemplateParams = {
@@ -374,6 +378,7 @@ async function sendAppointmentEmail(
       doctorAddress: doctorData?.address || "",
 
       patientName: patientData?.name,
+      patientUrl: `${baseURL}/dashboard/patients/${patientId}/view`,
 
       appointmentDate: formatDateForAppointmentEmails(appointmentDate),
     };
