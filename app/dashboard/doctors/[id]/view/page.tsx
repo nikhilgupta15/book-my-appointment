@@ -15,7 +15,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function DoctorEditPage({
+export default async function DoctorViewPage({
   params: { id },
 }: {
   params: { id: string };
@@ -32,13 +32,13 @@ export default async function DoctorEditPage({
         breadcrumbs={[
           { label: "Doctors", href: "/dashboard/doctors" },
           {
-            label: "Edit Doctor",
-            href: `/dashboard/doctors/${id}/edit`,
+            label: `Dr. ${doctor?.name}`,
+            href: `/dashboard/doctors/${id}/view`,
             active: true,
           },
         ]}
       />
-      <EditDoctorForm doctor={doctor} isEditable={true} />
+      <EditDoctorForm doctor={doctor} isEditable={false} />
     </main>
   );
 }

@@ -62,7 +62,13 @@ const formSchema = z.object({
     }),
 });
 
-export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
+export function EditDoctorForm({
+  doctor,
+  isEditable,
+}: {
+  doctor: Doctor;
+  isEditable: boolean;
+}) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -96,6 +102,7 @@ export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
         <FormField
           control={form.control}
           name="name"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
@@ -112,6 +119,7 @@ export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
         <FormField
           control={form.control}
           name="phone"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Phone</FormLabel>
@@ -128,6 +136,7 @@ export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
         <FormField
           control={form.control}
           name="email"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
@@ -144,6 +153,7 @@ export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
         <FormField
           control={form.control}
           name="address"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Address</FormLabel>
@@ -160,10 +170,15 @@ export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
         <FormField
           control={form.control}
           name="speciality"
+          disabled={!isEditable}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Department</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                disabled={!isEditable}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a department" {...field} />
@@ -173,7 +188,11 @@ export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
                   <SelectGroup>
                     <SelectLabel>Department</SelectLabel>
                     {specialities.map((speciality) => (
-                      <SelectItem key={speciality} value={speciality}>
+                      <SelectItem
+                        key={speciality}
+                        value={speciality}
+                        disabled={!isEditable}
+                      >
                         {speciality}
                       </SelectItem>
                     ))}
@@ -187,9 +206,11 @@ export function EditDoctorForm({ doctor }: { doctor: Doctor }) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
-          Submit
-        </Button>
+        {isEditable && (
+          <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
+            Submit
+          </Button>
+        )}
       </form>
     </Form>
   );
